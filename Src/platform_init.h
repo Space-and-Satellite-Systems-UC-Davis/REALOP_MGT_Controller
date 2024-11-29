@@ -17,6 +17,7 @@
 #include <LED/led.h>
 #include <UART/uart.h>
 #include <print_scan.h>
+#include <PWM/pwm_timer.h>
 
 
 /**
@@ -28,9 +29,7 @@
 void init_platform() {
 	SCB->CPACR|= 0x00F00000; // Enable the Floating-Point Unit for full access
 	init_coreClocks();
-
-	// init intercomm
-	// init radio
+	pwm_init();
 
 	led_init();
 	// printer_init();
