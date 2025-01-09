@@ -61,7 +61,7 @@ void pwm_timer_gpio() {
 }
 
 /**
- * Initalizes PWM timers and GPIO, called inside platform init
+ * Initializes PWM timers and GPIO, called inside platform init
  */
 void pwm_init() {
 	pwm_timer_gpio();
@@ -134,6 +134,7 @@ void pwm_setDutyCycle(PWM_Channels channel, uint8_t percentage) {
 		case DRV1_PWM0:
 			period = PWMTimerDRV1->ARR;
 			PWMTimerDRV1->CCR4 = (int) (percentage * (period/100));
+			break;
 		case DRV1_PWM1:
 			period = PWMTimerDRV1->ARR;
 			PWMTimerDRV1->CCR3 = (int) (percentage * (period/100));
@@ -141,6 +142,7 @@ void pwm_setDutyCycle(PWM_Channels channel, uint8_t percentage) {
 		case DRV2_PWM0:
 			period = PWMTimerDRV2->ARR;
 			PWMTimerDRV2->CCR2 = (int) (percentage * (period/100));
+			break;
 		case DRV2_PWM1:
 			period = PWMTimerDRV2->ARR;
 			PWMTimerDRV2->CCR1 = (int) (percentage * (period/100));
@@ -200,24 +202,19 @@ void pwm_disableChannel(PWM_Channels channel) {
 		case DRV2_PWM1:
 			PWMTimerDRV1->CCER &= ~TIM_CCER_CC1E;
 			break;
-
 	}
 }
 
-void pwm_timerClockEnable(TIM_TypeDef* timer) {
-	if (timer == PWMTimerDRV0) {
-		RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
-	} else if(timer == PWMTimerDRV1) {
+void pwm_timerClockEnable(const TIM_TypeDef *timer) {
+	if (timer == PWMTimerDRV0 || timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
 	} else {
 		RCC->APB1ENR1 |= RCC_APB2ENR_TIM1EN;
 	}
 }
 
-void pwm_timerClockDisable(TIM_TypeDef* timer) {
-	if (timer == PWMTimerDRV0) {
-		RCC->APB1ENR1 &= ~RCC_APB1ENR1_TIM2EN;
-	} else if(timer == PWMTimerDRV1) {
+void pwm_timerClockDisable(const TIM_TypeDef *timer) {
+	if (timer == PWMTimerDRV0 ||  timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 &= ~RCC_APB1ENR1_TIM2EN;
 	} else {
 		RCC->APB1ENR1 &= ~RCC_APB2ENR_TIM1EN;

@@ -43,7 +43,7 @@ USART_ReceiverBuffer LPUART1_RxBuffer;
 //		rxbuff = &USART1_RxBuffer;
 //	}
 
-USART_ReceiverBuffer* uart_revisionBusDistinguisher(USART_TypeDef *bus) {
+USART_ReceiverBuffer* uart_revisionBusDistinguisher(const USART_TypeDef *bus) {
 	USART_ReceiverBuffer *rxbuff = NULL;
 
 
@@ -57,13 +57,13 @@ USART_ReceiverBuffer* uart_revisionBusDistinguisher(USART_TypeDef *bus) {
 }
 
 #define enqueueBuffer(buff,usart) buff.buffer[buff.rear] = usart->RDR; \
-							      buff.rear = (buff.rear + 1) % ReceiveBufferLen;
+							      buff.rear = (buff.rear + 1) % ReceiveBufferLen
 
 /************************ GPIO INITIALIZATION HELPERS ************************/
 
 void usart1_gpio_init() {
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
-	while (GPIOB->OTYPER == 0xFFFFFFFF);
+	while (GPIOB->OTYPER == 0xFFFFFFFF)
 
 
 	// configure the USART Pins to Alternate Function mode
@@ -80,7 +80,7 @@ void usart1_gpio_init() {
 /*************************** USART INITIALIZATIONS ***************************/
 
 void uart_8bit_1stop(USART_TypeDef *bus, int baud_rate, bool rts_cts_control) {
-	// all UARTs use HSI16 as per core_cofig.c,init_core_clocks()
+	// all UARTs use HSI16 as per core_config.c,init_core_clocks()
 	uint32_t uart_clock_speed = 16000000;
 	if (bus == LPUART1) {
 		// prep for baud rate calculation
@@ -140,7 +140,7 @@ void usart_transmitChar(USART_TypeDef *bus, char c) {
 	while(!(bus->ISR & USART_ISR_TC));
 }
 
-void usart_transmitBytes(USART_TypeDef *bus, uint8_t message[]) {
+void usart_transmitBytes(USART_TypeDef *bus, const uint8_t message[]) {
 	// Enable UART3 and Transmitter
 	bus->CR1 |= USART_CR1_UE | USART_CR1_TE;
 
@@ -159,7 +159,7 @@ void usart_transmitBytes(USART_TypeDef *bus, uint8_t message[]) {
 
 /**************************** USART RECEIVER ****************************/
 
-bool usart_recieverTimedOut(USART_ReceiverBuffer *rx) {
+bool usart_receiverTimedOut(USART_ReceiverBuffer *rx) {
 	if (rx->timedout) {
 		rx->timedout = false;
 		return true;
@@ -168,8 +168,8 @@ bool usart_recieverTimedOut(USART_ReceiverBuffer *rx) {
 	}
 }
 
-bool usart_recieveBufferNotEmpty(USART_TypeDef *bus) {
-	USART_ReceiverBuffer *rxbuff = uart_revisionBusDistinguisher(bus);
+bool usart_receiveBufferNotEmpty(const USART_TypeDef *bus) {
+	const USART_ReceiverBuffer *rxbuff = uart_revisionBusDistinguisher(bus);
 	if (rxbuff == NULL) {
 		return false;
 	}
@@ -177,7 +177,7 @@ bool usart_recieveBufferNotEmpty(USART_TypeDef *bus) {
 	return (rxbuff->front != rxbuff->rear);
 }
 
-int usart_recieveBytes(USART_TypeDef *bus, uint8_t buffer[], uint16_t size) {
+int usart_receiveBytes(const USART_TypeDef *bus, uint8_t buffer[], uint16_t size) {
 	USART_ReceiverBuffer *rxbuff = uart_revisionBusDistinguisher(bus);
 	if (rxbuff == NULL) {
 		return false;
@@ -190,7 +190,7 @@ int usart_recieveBytes(USART_TypeDef *bus, uint8_t buffer[], uint16_t size) {
 			rxbuff->front = (rxbuff->front + 1) % ReceiveBufferLen;
 		}
 
-		if (usart_recieverTimedOut(rxbuff)) {
+		if (usart_receiverTimedOut(rxbuff)) {
 			break;
 		}
 	}
