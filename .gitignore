@@ -65,3 +65,7 @@ build**
 cmake/**
 CMakeFiles/**
 CMakeCache.txt
+
+# vscode configs
+.vscode/**
+.vs/**
