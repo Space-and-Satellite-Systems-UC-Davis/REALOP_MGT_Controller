@@ -67,9 +67,9 @@ bool mgt_mcu_getCoilCurrent(uint8_t coil_num)
     int8_t coil_current = mgt_getCoilCurrent(coil_num);
 
     // Convert coil_current to whatever format you use for uart
-
+    int8_t buffer[] = {coil_current};
     // Send over uart
-
+    usart_transmitBytes(MGT_UART, buffer);
     // wait for ack
     return true;
 }
