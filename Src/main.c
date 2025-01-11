@@ -14,23 +14,24 @@ int main(void)
 
   while (1)
   {
-    char command = '0';
-    uint8_t coil_num = -1;
-    uint8_t timer_num = -1;
+    char command[] = {'0'};
+    uint8_t coil_num[] = {-1};
+    uint8_t timer_num[] = {-1};
+    uint8_t pwm_percentage[] = {-1};
 
     uint8_t size = (uint8_t) usart_receiveBytes(MGT_UART, command, 1);
     if (size != sizeof(command)) continue;
 
-    switch (command)
+    switch (command[0])
     {
     case MGT_GET_CURRENT_CMD:
-      size = (uint8_t) usart_receiveBytes(MGT_UART, coil_num, 1);
-      if (size != sizeof(coil_num)) continue;
-      mgt_mcu_getCoilCurrent(coil_num);
+      size = (uint8_t) usart_receiveBytes(MGT_UART, coil_num[0], 1);
+      if (size != sizeof(coil_num[0])) continue;
+      mgt_mcu_getCoilCurrent(coil_num[0]);
       continue;
     case MGT_SET_PWM_PERCENT_CMD:
-      // TODO Get the inputs and parse with correct formats
-      mgt_mcu_setPWMCoil();
+      size = (uint8_t) mgt_receive_packet(coil_num, timer_num, pwm_percentage);
+      mgt_mcu_setPWMCoil(coil_num[0], timer_num[0], pwm_percentage[0]);
       continue;
     case MGT_SHUTDOWN_CMD:
       mgt_mcu_shutdown();
