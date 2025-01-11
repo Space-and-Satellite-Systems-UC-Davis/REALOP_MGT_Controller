@@ -97,14 +97,28 @@ bool mgt_mcu_timerOff(const TIM_TypeDef* timer)
     return true;
 }
 
-/// @brief get a packet that encapsulates the data for the magnetorquer function calls.
+/// @brief get a packet that encapsulates the data for the magnetorquer function calls. After wards, write to the 
 /// @note A packet consist of the following format:
 /// `DELIMITER COMMAND ARG0 ARG1 ARG3 DELIMITER`
 /// In total 6 bytes.
-/// This might 
-/// @return the number of bytes received
-int mgt_receive_packet()
+/// @return True if all parts of the packet is received intact and false if any part of the data is corrupted
+bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[])
 {
+    uint8_t buffer[1];
+    usart_receiveBytes(MGT_UART, &buffer, 1);
+    if (buffer[0] != MGT_PACK_DELIMITER) return 0;
 
-    return 0;
+    usart_receiveBytes(MGT_UART, arg0, 1);
+    if (sizeof(*arg0) != 1) return 0;
+
+    usart_receiveBytes(MGT_UART, arg1, 1);
+    if (sizeof(*arg1) != 1) return 0;
+
+    usart_receiveBytes(MGT_UART, arg2, 1);
+    if (sizeof(*arg2) != 1) return 0;
+
+    usart_receiveBytes(MGT_UART, &buffer, 1);
+    if (buffer[0] != MGT_PACK_DELIMITER) return 0;
+
+    return 1;
 }

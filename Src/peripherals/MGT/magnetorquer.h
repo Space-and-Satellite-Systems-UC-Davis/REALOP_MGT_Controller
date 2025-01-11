@@ -12,7 +12,7 @@
 #define MGT_GET_CURRENT_CMD 'C'
 #define MGT_TIMER_OFF_CMD 'T'
 
-#define PACK_DELIMITER 0x7E
+#define MGT_PACK_DELIMITER 0x7E
 
 // Coil addresses
 #define MGT_0_GPIO  GPIOA
@@ -27,4 +27,4 @@ bool mgt_mcu_shutdown();
 
 bool mgt_mcu_timerOff(const TIM_TypeDef* timer);
 
-int mgt_receive_packet();
+bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[]);
