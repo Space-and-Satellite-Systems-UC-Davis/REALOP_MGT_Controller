@@ -15,7 +15,7 @@
 /// @param pwm_num the pwm channel to configure
 /// @param pwm_percentage percentage for pwm duty cycle
 /// @return true if pwm is set correctly, false otherwise
-bool mgt_setPercentCoilAck(uint8_t coil_num, uint8_t pwm_num, uint8_t pwm_percentage)
+bool mgt_mcu_setPWMCoil(uint8_t coil_num, uint8_t pwm_num, uint8_t pwm_percentage)
 {
     if ((pwm_num != 0 && pwm_num != 1) || coil_num > 2) return false;
     switch (coil_num)
@@ -51,16 +51,33 @@ bool mgt_setPercentCoilAck(uint8_t coil_num, uint8_t pwm_num, uint8_t pwm_percen
  * mgttlm     PC0  
  */
 
-bool mgt_getCoilCurrentAck(uint8_t coil_num)
+int8_t mgt_getCoilCurrent(uint8_t coil_num) {
+    if(coil_num == 0) {
+        return 0;
+    } else if (coil_num == 1) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
+
+bool mgt_mcu_getCoilCurrent(uint8_t coil_num)
 {
-    
+    // TODO replace and impliment dummy funciton
+    int8_t coil_current = mgt_getCoilCurrent(coil_num);
+
+    // Convert coil_current to whatever format you use for uart
+
+    // Send over uart
+
+    // wait for ack
     return true;
 }
 
 /// @brief This function handles turns off all the PWM timers on the MGT MCU side, thereby interrupting the PSM signals. \n
 /// A char 'A' is sended to the primary flight computer (PFC) as acknowledgement.
 /// @return true if shutdown is successful
-bool mgt_ShutdownAck()
+bool mgt_mcu_shutdown()
 {
     pwm_timerOff(PWMTimerDRV0);
     pwm_timerOff(PWMTimerDRV1);
@@ -68,14 +85,26 @@ bool mgt_ShutdownAck()
     usart_transmitChar(MGT_UART, 'A');
     return true;
 }
-
+/// * YOU WILL BE PASSING IN THE TIMER NUMBER AS A INT, NOT THE ADDRESS.
 /// @brief This function handles turns off the specified PWM timers on the MGT MCU side, thereby interrupting the PSM signals. \n
 /// A char 'A' is sended to the primary flight computer (PFC) as acknowledgement.
 /// @param timer the specific PWM Timer to disable
 /// @return true if timer is successfully deactivated
-bool mgt_timerOffAck(const TIM_TypeDef* timer)
+bool mgt_mcu_timerOff(const TIM_TypeDef* timer)
 {
     pwm_timerOff(timer);
     usart_transmitChar(MGT_UART, 'A');
     return true;
+}
+
+/// @brief get a packet that encapsulates the data for the magnetorquer function calls.
+/// @note A packet consist of the following format:
+/// `DELIMITER COMMAND ARG0 ARG1 ARG3 DELIMITER`
+/// In total 6 bytes.
+/// This might 
+/// @return the number of bytes received
+int mgt_receive_packet()
+{
+
+    return 0;
 }
