@@ -40,6 +40,7 @@ int main(void)
       size = (uint8_t) usart_receiveBytes(MGT_UART, timer_num, 1);
       if (size != sizeof(timer_num)) continue;
       mgt_mcu_timerOff(timer_num);
+      continue;
     default:
       continue;
     }
