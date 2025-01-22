@@ -30,7 +30,12 @@ int main(void)
       mgt_mcu_getCoilCurrent(coil_num[0]);
       continue;
     case MGT_SET_PWM_PERCENT_CMD:
-      size = (uint8_t) mgt_receive_packet(coil_num, timer_num, pwm_percentage);
+      size = (uint8_t) usart_receiveBytes(MGT_UART, coil_num, 1);
+      if (size != sizeof(coil_num[0])) continue;
+      size = (uint8_t) usart_receiveBytes(MGT_UART, timer_num, 1);
+      if (size != sizeof(coil_num[0])) continue;
+      size = (uint8_t) usart_receiveBytes(MGT_UART, pwm_percentage, 1);
+      if (size != sizeof(coil_num[0])) continue;
       mgt_mcu_setPWMCoil(coil_num[0], timer_num[0], pwm_percentage[0]);
       continue;
     case MGT_SHUTDOWN_CMD:
@@ -39,6 +44,7 @@ int main(void)
     case MGT_TIMER_OFF_CMD:
       size = (uint8_t) usart_receiveBytes(MGT_UART, timer_num, 1);
       if (size != sizeof(timer_num)) continue;
+      
       mgt_mcu_timerOff(timer_num);
       continue;
     default:

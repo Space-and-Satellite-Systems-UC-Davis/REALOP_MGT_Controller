@@ -205,7 +205,7 @@ void pwm_disableChannel(PWM_Channels channel) {
 	}
 }
 
-void pwm_timerClockEnable(const TIM_TypeDef *timer) {
+void pwm_timerClockEnable(TIM_TypeDef *timer) {
 	if (timer == PWMTimerDRV0 || timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
 	} else {
@@ -213,7 +213,7 @@ void pwm_timerClockEnable(const TIM_TypeDef *timer) {
 	}
 }
 
-void pwm_timerClockDisable(const TIM_TypeDef *timer) {
+void pwm_timerClockDisable(TIM_TypeDef *timer) {
 	if (timer == PWMTimerDRV0 ||  timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 &= ~RCC_APB1ENR1_TIM2EN;
 	} else {

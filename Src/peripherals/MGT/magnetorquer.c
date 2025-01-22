@@ -90,8 +90,23 @@ bool mgt_mcu_shutdown()
 /// A char 'A' is sended to the primary flight computer (PFC) as acknowledgement.
 /// @param timer the specific PWM Timer to disable
 /// @return true if timer is successfully deactivated
-bool mgt_mcu_timerOff(const TIM_TypeDef* timer)
+bool mgt_mcu_timerOff(uint8_t timer_num)
 {
+    TIM_TypeDef* timer;
+    switch (timer_num)
+    {
+    case 0:
+        timer = PWMTimerDRV0;
+        break;
+    case 1:
+        timer = PWMTimerDRV1;
+        break;
+    case 2:
+        timer = PWMTimerDRV2;
+        break;
+    default:
+        break;
+    }
     pwm_timerOff(timer);
     usart_transmitChar(MGT_UART, 'A');
     return true;

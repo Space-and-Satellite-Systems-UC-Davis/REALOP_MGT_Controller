@@ -25,6 +25,6 @@ bool mgt_mcu_getCoilCurrent(uint8_t coil_num);
 
 bool mgt_mcu_shutdown();
 
-bool mgt_mcu_timerOff(const TIM_TypeDef* timer);
+bool mgt_mcu_timerOff(uint8_t timer_num);
 
 bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[]);
