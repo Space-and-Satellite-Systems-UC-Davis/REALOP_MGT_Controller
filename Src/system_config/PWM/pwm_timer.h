@@ -25,8 +25,8 @@ void pwm_setDutyCycle(PWM_Channels channel,uint8_t percentage);
 void pwm_timerOn(TIM_TypeDef* timer);
 void pwm_timerOff(TIM_TypeDef* timer);
 
-void pwm_timerClockEnable(const TIM_TypeDef *timer);
-void pwm_timerClockDisable(const TIM_TypeDef *timer);
+void pwm_timerClockEnable(TIM_TypeDef *timer);
+void pwm_timerClockDisable(TIM_TypeDef *timer);
 void pwm_enableChannel(PWM_Channels channel);
 void pwm_disableChannel(PWM_Channels channel);
 void pwm_init();

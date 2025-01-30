@@ -209,7 +209,7 @@ void pwm_timerClockEnable(TIM_TypeDef *timer) {
 	if (timer == PWMTimerDRV0 || timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 |= RCC_APB1ENR1_TIM2EN;
 	} else {
-		RCC->APB1ENR1 |= RCC_APB2ENR_TIM1EN;
+		RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
 	}
 }
 
@@ -217,6 +217,6 @@ void pwm_timerClockDisable(TIM_TypeDef *timer) {
 	if (timer == PWMTimerDRV0 ||  timer == PWMTimerDRV1) {
 		RCC->APB1ENR1 &= ~RCC_APB1ENR1_TIM2EN;
 	} else {
-		RCC->APB1ENR1 &= ~RCC_APB2ENR_TIM1EN;
+		RCC->APB2ENR &= ~RCC_APB2ENR_TIM1EN;
 	}
 }
