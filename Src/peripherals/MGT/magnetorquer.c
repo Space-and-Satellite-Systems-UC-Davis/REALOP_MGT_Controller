@@ -92,7 +92,7 @@ bool mgt_mcu_shutdown()
 /// @return true if timer is successfully deactivated
 bool mgt_mcu_timerOff(uint8_t timer_num)
 {
-    TIM_TypeDef* timer;
+    TIM_TypeDef* timer = NULL;
     switch (timer_num)
     {
     case 0:
@@ -105,6 +105,7 @@ bool mgt_mcu_timerOff(uint8_t timer_num)
         timer = PWMTimerDRV2;
         break;
     default:
+        return false;
         break;
     }
     pwm_timerOff(timer);
@@ -120,7 +121,7 @@ bool mgt_mcu_timerOff(uint8_t timer_num)
 bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[])
 {
     uint8_t buffer[1];
-    usart_receiveBytes(MGT_UART, &buffer, 1);
+    usart_receiveBytes(MGT_UART, buffer, 1);
     if (buffer[0] != MGT_PACK_DELIMITER) return 0;
 
     usart_receiveBytes(MGT_UART, arg0, 1);
@@ -132,7 +133,7 @@ bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[])
     usart_receiveBytes(MGT_UART, arg2, 1);
     if (sizeof(*arg2) != 1) return 0;
 
-    usart_receiveBytes(MGT_UART, &buffer, 1);
+    usart_receiveBytes(MGT_UART, buffer, 1);
     if (buffer[0] != MGT_PACK_DELIMITER) return 0;
 
     return 1;
