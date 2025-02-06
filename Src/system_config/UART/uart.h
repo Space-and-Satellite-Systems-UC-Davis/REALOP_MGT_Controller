@@ -13,9 +13,9 @@
 #include <GPIO/gpio.h>
 #include <string.h>
 
-/*
- * Initializes the UART hardware to conduct UART communication with
- * 1 start bit, 8 data bits, 1 stop bits, No parity
+/**
+ ** Initializes the UART hardware to conduct UART communication with
+ ** 1 start bit, 8 data bits, 1 stop bits, No parity
  *
  * @param bus        The USART Bus that needs initialization
  * @param baud_rate  The desired Baud Rate of the UART system
@@ -24,30 +24,30 @@
  */
 bool usart_init(USART_TypeDef *bus, int baud_rate);
 
-/*
- * Utilizes USART hardware transmitter to send a variable length string
+/**
+ ** Utilizes USART hardware transmitter to send a variable length string
  *
  * @param bus       The USART Bus doing the transmission
  * @param message   The string (character array) being sent
  *
  * @returns None
  */
-void usart_transmitBytes(USART_TypeDef *bus, uint8_t message[]);
+void usart_transmitBytes(USART_TypeDef *bus, const uint8_t message[]);
 
 void usart_transmitChar(USART_TypeDef *bus, char c);
 
-/*
- * Returns the status of the USART reciever's FIFO buffer
+/**
+ ** Returns the status of the USART receiver's FIFO buffer
  *
  * @param None
  * @returns Whether the buffer has
  */
-bool usart_recieveBufferNotEmpty();
+bool usart_receiveBufferNotEmpty(const USART_TypeDef *bus);
 
-/*
- * Utilizes the USART hardware receiver to get `size` number of bytes from a FIFO buffer.
- * Will wait for more bytes in case enough aren't available.
- * Incorporates a timeout system for safety.
+/**
+ ** Utilizes the USART hardware receiver to get `size` number of bytes from a FIFO buffer.
+ ** Will wait for more bytes in case enough aren't available.
+ ** Incorporates a timeout system for safety.
  *
  * @param bus		The USART Bus that will be receiving
  * @param buffer	The buffer where the received bytes must be stored. Length is assumed to be >= `size`
@@ -55,6 +55,6 @@ bool usart_recieveBufferNotEmpty();
  *
  * @returns			The number of bytes actually received and stored ( <= `size`)
  */
-int usart_recieveBytes(USART_TypeDef *bus, uint8_t buffer[], uint16_t size);
+int usart_receiveBytes(const USART_TypeDef *bus, uint8_t buffer[], uint16_t size);
 
 #endif	// REALOP1_UART_H_
