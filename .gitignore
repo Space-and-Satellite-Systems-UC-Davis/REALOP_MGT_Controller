@@ -61,13 +61,14 @@ release
 *.launch
 
 # CMake build files
-build**
+build/**
 cmake/**
 CMakeFiles/**
 CMakeCache.txt
 
 # vscode configs
 .vscode/**
+!.vscode/cspell.json
 .vs/**
 
 # Mac file extensions
