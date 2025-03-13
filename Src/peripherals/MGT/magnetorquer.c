@@ -44,7 +44,7 @@ bool mgt_mcu_setPWMCoil(uint8_t coil_num, uint8_t pwm_num, uint8_t pwm_percentag
     default:
         return false;
     }
-    usart_transmitChar(MGT_UART, 'A');
+    usart_transmitChar(MGT_USART, 'A');
     return true;
 }
 /**
@@ -66,10 +66,8 @@ bool mgt_mcu_getCoilCurrent(uint8_t coil_num)
     // TODO replace and impliment dummy funciton
     int8_t coil_current = mgt_getCoilCurrent(coil_num);
 
-    // Convert coil_current to whatever format you use for uart
-    int8_t buffer[] = {coil_current};
     // Send over uart
-    usart_transmitBytes(MGT_UART, buffer);
+    usart_transmitChar(MGT_USART, (char) coil_current);
     // wait for ack
     return true;
 }
@@ -82,7 +80,7 @@ bool mgt_mcu_shutdown()
     pwm_timerOff(PWMTimerDRV0);
     pwm_timerOff(PWMTimerDRV1);
     pwm_timerOff(PWMTimerDRV2);
-    usart_transmitChar(MGT_UART, 'A');
+    usart_transmitChar(MGT_USART, 'A');
     return true;
 }
 /// * YOU WILL BE PASSING IN THE TIMER NUMBER AS A INT, NOT THE ADDRESS.
@@ -109,32 +107,6 @@ bool mgt_mcu_timerOff(uint8_t timer_num)
         break;
     }
     pwm_timerOff(timer);
-    usart_transmitChar(MGT_UART, 'A');
+    usart_transmitChar(MGT_USART, 'A');
     return true;
-}
-
-/// @brief get a packet that encapsulates the data for the magnetorquer function calls. After wards, write to the 
-/// @note A packet consist of the following format:
-/// `DELIMITER COMMAND ARG0 ARG1 ARG3 DELIMITER`
-/// In total 6 bytes.
-/// @return True if all parts of the packet is received intact and false if any part of the data is corrupted
-bool mgt_receive_packet(uint8_t arg0[], uint8_t arg1[], uint8_t arg2[])
-{
-    uint8_t buffer[1];
-    usart_receiveBytes(MGT_UART, buffer, 1);
-    if (buffer[0] != MGT_PACK_DELIMITER) return 0;
-
-    usart_receiveBytes(MGT_UART, arg0, 1);
-    if (sizeof(*arg0) != 1) return 0;
-
-    usart_receiveBytes(MGT_UART, arg1, 1);
-    if (sizeof(*arg1) != 1) return 0;
-
-    usart_receiveBytes(MGT_UART, arg2, 1);
-    if (sizeof(*arg2) != 1) return 0;
-
-    usart_receiveBytes(MGT_UART, buffer, 1);
-    if (buffer[0] != MGT_PACK_DELIMITER) return 0;
-
-    return 1;
 }

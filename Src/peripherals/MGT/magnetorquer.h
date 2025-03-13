@@ -5,14 +5,12 @@
 #include "PWM/pwm_timer.h"
 #include "GPIO/gpio.h"
 
-#define MGT_UART USART1
+#define MGT_USART USART1
 
 #define MGT_SHUTDOWN_CMD 'D'
 #define MGT_SET_PWM_PERCENT_CMD 'S'
 #define MGT_GET_CURRENT_CMD 'C'
 #define MGT_TIMER_OFF_CMD 'T'
-
-#define MGT_PACK_DELIMITER 0x7E
 
 // Coil addresses
 #define MGT_0_GPIO  GPIOA

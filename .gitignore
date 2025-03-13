@@ -69,3 +69,6 @@ CMakeCache.txt
 # vscode configs
 .vscode/**
 .vs/**
+
+# Mac file extensions
+.DS_Store
