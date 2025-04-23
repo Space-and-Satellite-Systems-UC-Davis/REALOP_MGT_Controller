@@ -23,6 +23,24 @@ enum gpio_pull_states {
 	GPIO_Pullup,
 	GPIO_Pulldown,
 };
+enum gpio_alternate_func {
+	GPIO_AFRX_AF0,
+	GPIO_AFRX_AF1,
+	GPIO_AFRX_AF2,
+	GPIO_AFRX_AF3,
+	GPIO_AFRX_AF4,
+	GPIO_AFRX_AF5,
+	GPIO_AFRX_AF6,
+	GPIO_AFRX_AF7,
+	GPIO_AFRX_AF8,
+	GPIO_AFRX_AF9,
+	GPIO_AFRX_AF10,
+	GPIO_AFRX_AF11,
+	GPIO_AFRX_AF12,
+	GPIO_AFRX_AF13,
+	GPIO_AFRX_AF14,
+	GPIO_AFRX_AF15
+};
 
 /**
  * Sets the specified GPIO pin to high.

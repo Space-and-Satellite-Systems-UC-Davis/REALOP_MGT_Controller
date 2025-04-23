@@ -59,3 +59,17 @@ release
 
 # Launch file
 *.launch
+
+# CMake build files
+build/**
+cmake/**
+CMakeFiles/**
+CMakeCache.txt
+
+# vscode configs
+.vscode/**
+!.vscode/cspell.json
+.vs/**
+
+# Mac file extensions
+.DS_Store
