@@ -45,4 +45,3 @@ int debugMsg(const char *message, ...) {
     usart_transmitStr(ConsoleUART, (uint8_t*)":");
     usart_transmitStr(ConsoleUART, (uint8_t*)buff);
 }
-

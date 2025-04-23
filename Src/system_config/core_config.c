@@ -88,5 +88,7 @@ void init_coreClocks() {
 // ----------------------------------------------------------------------------
 
 void nop(long long nop_loops) {
-	for (long long i = 0; i < nop_loops; i++) {__NOP();}
+	for (long long i = 0; i < nop_loops; i++) {
+		__NOP();
+	}
 }

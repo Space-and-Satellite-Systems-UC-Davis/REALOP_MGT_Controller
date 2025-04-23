@@ -23,7 +23,6 @@ enum gpio_pull_states {
 	GPIO_Pullup,
 	GPIO_Pulldown,
 };
-
 enum gpio_alternate_func {
 	GPIO_AFRX_AF0,
 	GPIO_AFRX_AF1,
