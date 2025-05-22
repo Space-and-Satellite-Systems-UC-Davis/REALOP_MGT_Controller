@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <print_scan.h>
 #include "platform_init.h"
-
+#include <ADC/adc.h>
 
 
 
@@ -12,8 +12,17 @@
 int main(void)
 {
     init_platform();
+    adc_init();
+
+
+
 
     while (1) {
+
+    int chan2 = adc_readChannel(ADC1, 2);
+    int chan3 = adc_readChannel(ADC1, 3);
+    int v2 = adc_readVoltage(2);
+    int v3 = adc_readVoltage(3);
         
     }
 }
