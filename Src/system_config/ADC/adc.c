@@ -1,4 +1,4 @@
-#include "adc.h"
+#include <ADC/adc.h>
 
 
 /** Private helper functions */

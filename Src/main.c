@@ -2,6 +2,7 @@
 #include <print_scan.h>
 #include "platform_init.h"
 #include <ADC/adc.h>
+#include "globals.h"
 
 
 
@@ -21,8 +22,8 @@ int main(void)
 
     int chan2 = adc_readChannel(ADC1, 2);
     int chan3 = adc_readChannel(ADC1, 3);
-    int v2 = adc_readVoltage(2);
-    int v3 = adc_readVoltage(3);
+    int v2 = adc_readVoltage(chan2);
+    int v3 = adc_readVoltage(chan3);
         
     }
 }

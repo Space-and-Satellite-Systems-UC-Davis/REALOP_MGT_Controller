@@ -11,8 +11,10 @@
 #define RCC_CCIPR_ADCSEL_PLLSAI1 (2 << RCC_CCIPR_ADCSEL_Pos)
 #define RCC_CCIPR_ADCSEL_PLLSAI2 (1 << RCC_CCIPR_ADCSEL_Pos)
 
+
 uint16_t adc_readChannel(ADC_TypeDef* adc, int channel);
 float adc_readVoltage(uint16_t channelReading);
+void wait_with_timeout(bool (*continue_waiting)(), uint64_t timeout_ms);
 void adc_init();
 
 
