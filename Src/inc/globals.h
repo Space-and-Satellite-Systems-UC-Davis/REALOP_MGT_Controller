@@ -9,6 +9,8 @@
 typedef enum {false, true} bool;
 #define NULL 0
 
+#define DEFAULT_TIMEOUT_MS 1000
+
 
 void delay_ms(uint64_t ms);
 void nop(long long nop_loops);
