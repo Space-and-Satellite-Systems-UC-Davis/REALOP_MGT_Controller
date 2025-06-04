@@ -6,8 +6,8 @@
 #define OP_REV 3	// the Orbital Platform revision being programmed
 
 #if OP_REV == 1 || OP_REV == 2 || OP_REV == 3
-#define UNUSED_GPIO             GPIOG, 1
-#define LOCK_UNUSED_GPIO_HIGH() GPIOG->PUPDR |= (1 << GPIO_PUPDR_PUPD1)
+#define UNUSED_GPIO             GPIOH, 1
+#define LOCK_UNUSED_GPIO_HIGH() GPIOH->PUPDR |= (1 << GPIO_PUPDR_PUPD1)
 #endif
 
 typedef enum {false, true} bool;
@@ -28,7 +28,6 @@ bool is_GPIOB_not_ready();
 bool is_GPIOC_not_ready();
 bool is_GPIOD_not_ready();
 bool is_GPIOE_not_ready();
-bool is_GPIOF_not_ready();
-bool is_GPIOG_not_ready();
+bool is_GPIOH_not_ready();
 
 #endif // REALOP1_GLOBALS_H_

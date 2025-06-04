@@ -149,17 +149,17 @@ void usart1_gpio_init() {
 	GPIOB->AFR[0] &= ~(GPIO_AFRL_AFSEL6_Msk | GPIO_AFRL_AFSEL7_Msk);
 	GPIOB->AFR[0] |= (7U << GPIO_AFRL_AFSEL6_Pos) | (7U << GPIO_AFRL_AFSEL7_Pos);
 #elif OP_REV == 3 
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOGEN;
-	wait_with_timeout(is_GPIOG_not_ready, DEFAULT_TIMEOUT_MS);
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+	wait_with_timeout(is_GPIOA_not_ready, DEFAULT_TIMEOUT_MS);
 
 
 	// configure the USART Pins to Alternate Function mode
-	GPIOG->MODER &= ~(GPIO_MODER_MODE9_Msk | GPIO_MODER_MODE10_Msk);
-	GPIOG->MODER |= (GPIO_MODER_MODE9_1 | GPIO_MODER_MODE10_1);
+	GPIOA->MODER &= ~(GPIO_MODER_MODE9_Msk | GPIO_MODER_MODE10_Msk);
+	GPIOA->MODER |= (GPIO_MODER_MODE9_1 | GPIO_MODER_MODE10_1);
 
 	// configure each pin to AF7
-	GPIOG->AFR[1] &= ~(GPIO_AFRH_AFSEL9_Msk | GPIO_AFRH_AFSEL10_Msk);
-	GPIOG->AFR[1] |= (GPIO_AFRX_AF7 << GPIO_AFRH_AFSEL9_Pos) | (GPIO_AFRX_AF7 << GPIO_AFRH_AFSEL10_Pos);
+	GPIOA->AFR[1] &= ~(GPIO_AFRH_AFSEL9_Msk | GPIO_AFRH_AFSEL10_Msk);
+	GPIOA->AFR[1] |= (GPIO_AFRX_AF7 << GPIO_AFRH_AFSEL9_Pos) | (GPIO_AFRX_AF7 << GPIO_AFRH_AFSEL10_Pos);
 #endif
 
 	return;
@@ -167,15 +167,15 @@ void usart1_gpio_init() {
 }
 void usart2_gpio_init() {
 #if OP_REV == 3
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIODEN;
-	wait_with_timeout(is_GPIOD_not_ready, DEFAULT_TIMEOUT_MS);
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+	wait_with_timeout(is_GPIOA_not_ready, DEFAULT_TIMEOUT_MS);
 
-	GPIOD->MODER &= ~(GPIO_MODER_MODE5_Msk | GPIO_MODER_MODE6_Msk);
-	GPIOD->MODER |= (GPIO_MODER_MODE5_1 | GPIO_MODER_MODE6_1);
+	GPIOA->MODER &= ~(GPIO_MODER_MODE2_Msk | GPIO_MODER_MODE3_Msk);
+	GPIOA->MODER |= (GPIO_MODER_MODE2_1 | GPIO_MODER_MODE3_1);
 
 	// configure each pin to AF7
-	GPIOD->AFR[0] &= ~(GPIO_AFRL_AFSEL5_Msk | GPIO_AFRL_AFSEL6_Msk);
-	GPIOD->AFR[0] |= (GPIO_AFRX_AF7 << GPIO_AFRL_AFSEL6_Pos) | (GPIO_AFRX_AF7 << GPIO_AFRL_AFSEL5_Pos);
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2_Msk | GPIO_AFRL_AFSEL3_Msk);
+	GPIOA->AFR[0] |= (GPIO_AFRX_AF7 << GPIO_AFRL_AFSEL2_Pos) | (GPIO_AFRX_AF7 << GPIO_AFRL_AFSEL3_Pos);
 #endif
 	return;
 
@@ -244,18 +244,16 @@ void lpuart_gpio_init() {
 	 * 		RX		GPIO G 8		Alternate Function 8
 	 */
 
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOGEN;
-	wait_with_timeout(is_GPIOG_not_ready, DEFAULT_TIMEOUT_MS);
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
+	wait_with_timeout(is_GPIOA_not_ready, DEFAULT_TIMEOUT_MS);
 
 	// configure the LPUART Pins to Alternate Function mode
-	GPIOG->MODER &= ~(GPIO_MODER_MODE7_Msk | GPIO_MODER_MODE8_Msk);
-	GPIOG->MODER |= (GPIO_MODER_MODE7_1 | GPIO_MODER_MODE8_1);
+	GPIOA->MODER &= ~(GPIO_MODER_MODE2_Msk | GPIO_MODER_MODE3_Msk);
+	GPIOA->MODER |= (GPIO_MODER_MODE2_1 | GPIO_MODER_MODE3_1);
 
 	// configure each pin to AF8
-	GPIOG->AFR[0] &= ~(GPIO_AFRL_AFSEL7_Msk);
-	GPIOG->AFR[1] &= ~(GPIO_AFRH_AFSEL8_Msk);
-	GPIOG->AFR[0] |= (GPIO_AFRX_AF8 << GPIO_AFRL_AFSEL7_Pos);
-	GPIOG->AFR[1] |= (GPIO_AFRX_AF8 << GPIO_AFRH_AFSEL8_Pos);
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2_Msk | GPIO_AFRL_AFSEL3_Msk);
+	GPIOA->AFR[0] |= ((GPIO_AFRX_AF8 << GPIO_AFRL_AFSEL2_Pos) | (GPIO_AFRX_AF8 << GPIO_AFRL_AFSEL3_Msk));
 
 #endif
 
@@ -318,16 +316,16 @@ bool usart_init(USART_TypeDef *bus, int baud_rate) {
 			uart_8bit_1stop(USART3, baud_rate, false);
             NVIC_EnableIRQ(USART3_IRQn);
 			break;
-		case (int)UART4:
-			RCC->APB1ENR1 |= RCC_APB1ENR1_UART4EN;
-			uart4_gpio_init();
-            NVIC_EnableIRQ(UART4_IRQn);
-			break;
-		case (int)UART5:
-			RCC->APB1ENR1 |= RCC_APB1ENR1_UART5EN;
-			uart4_gpio_init();
-            NVIC_EnableIRQ(UART5_IRQn);
-			break;
+		// case (int)UART4:
+		// 	RCC->APB1ENR1 |= RCC_APB1ENR1_UART4EN;
+		// 	uart4_gpio_init();
+        //     NVIC_EnableIRQ(UART4_IRQn);
+		// 	break;
+		// case (int)UART5:
+		// 	RCC->APB1ENR1 |= RCC_APB1ENR1_UART5EN;
+		// 	uart4_gpio_init();
+        //     NVIC_EnableIRQ(UART5_IRQn);
+		// 	break;
 		case (int)LPUART1:
 			RCC->APB1ENR2 |= RCC_APB1ENR2_LPUART1EN;
 			lpuart_gpio_init();
@@ -468,38 +466,38 @@ void USART2_IRQHandler() {
 	}
 }
 
-void USART3_IRQHandler() {
-	if (USART3->ISR & USART_ISR_RXNE) {
-		USART3->ISR &= ~USART_ISR_RXNE;
-#if OP_REV == 1
-		enqueueBuffer(USART3_RxBuffer, USART3);
-#endif
-	}
-	if (USART3->ISR & USART_ISR_RTOF) {
-		USART3->ISR &= ~USART_ISR_RTOF;
-#if OP_REV == 1
-		USART3_RxBuffer.timedout = true;
-#endif
-	}
-}
+// void USART3_IRQHandler() {
+// 	if (USART3->ISR & USART_ISR_RXNE) {
+// 		USART3->ISR &= ~USART_ISR_RXNE;
+// #if OP_REV == 1
+// 		enqueueBuffer(USART3_RxBuffer, USART3);
+// #endif
+// 	}
+// 	if (USART3->ISR & USART_ISR_RTOF) {
+// 		USART3->ISR &= ~USART_ISR_RTOF;
+// #if OP_REV == 1
+// 		USART3_RxBuffer.timedout = true;
+// #endif
+// 	}
+// }
 
-void UART4_IRQHandler() {
-	if (UART4->ISR & USART_ISR_RXNE) {
-		UART4->ISR &= ~USART_ISR_RXNE;
-	}
-	if (UART4->ISR & USART_ISR_RTOF) {
-		UART4->ISR &= ~USART_ISR_RTOF;
-	}
-}
+// void UART4_IRQHandler() {
+// 	if (UART4->ISR & USART_ISR_RXNE) {
+// 		UART4->ISR &= ~USART_ISR_RXNE;
+// 	}
+// 	if (UART4->ISR & USART_ISR_RTOF) {
+// 		UART4->ISR &= ~USART_ISR_RTOF;
+// 	}
+// }
 
-void UART5_IRQHandler() {
-	if (UART5->ISR & USART_ISR_RXNE) {
-		UART5->ISR &= ~USART_ISR_RXNE;
-	}
-	if (UART5->ISR & USART_ISR_RTOF) {
-		UART5->ISR &= ~USART_ISR_RTOF;
-	}
-}
+// void UART5_IRQHandler() {
+// 	if (UART5->ISR & USART_ISR_RXNE) {
+// 		UART5->ISR &= ~USART_ISR_RXNE;
+// 	}
+// 	if (UART5->ISR & USART_ISR_RTOF) {
+// 		UART5->ISR &= ~USART_ISR_RTOF;
+// 	}
+// }
 
 void LPUART1_IRQHandler() {
 	if (LPUART1->ISR & USART_ISR_RXNE) {
