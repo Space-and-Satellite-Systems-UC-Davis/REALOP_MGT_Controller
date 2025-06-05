@@ -1,11 +1,8 @@
 #include <stdint.h>
 #include <print_scan.h>
 #include "platform_init.h"
-//#include "print_scan.h"
-#include "UART/pcp.h"
-#include "UART/uart.h"
 #include "Timers/timers.h"
-#include "UART/pcp_handler.c"
+#include "UART/pcp_handler.h"
 
 
 
