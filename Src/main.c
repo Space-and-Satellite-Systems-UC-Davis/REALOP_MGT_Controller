@@ -15,6 +15,7 @@ int main(void)
   init_platform();
   usart_init(USART1, 9600);
 
+
   //Length of chunks being sent in bytes between PFC, Radio, and Ground
   #define CHUNK_LENGTH 8
   //Time between upload requests in seconds
@@ -26,8 +27,10 @@ int main(void)
 	uint8_t chunk[CHUNK_LENGTH];
 
 	uint64_t start_time = getSysTime();
+    pcp_transmit(&pcp, "hello?", 7);
     while(1) {
     	nop(1);
+      // gpio_high(USART1, )
     	int read_status = pcp_read(&pcp, chunk);
     	if (read_status != -1) {
     		handle_pcp_packet(&pcp, chunk);

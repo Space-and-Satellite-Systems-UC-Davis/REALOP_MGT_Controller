@@ -31,3 +31,10 @@ void wait_with_timeout(bool (*continue_waiting)(), uint64_t timeout_ms) {
     while_timeout(empty_function, continue_waiting, timeout_ms);
 }
 
+//Multiple files use these functions so declaring here to avoid declaring multiple times
+bool is_GPIOA_not_ready() { return (GPIOA->OTYPER == 0xFFFFFFFF); }
+bool is_GPIOB_not_ready() { return (GPIOB->OTYPER == 0xFFFFFFFF); }
+bool is_GPIOC_not_ready() { return (GPIOC->OTYPER == 0xFFFFFFFF); }
+bool is_GPIOD_not_ready() { return (GPIOD->OTYPER == 0xFFFFFFFF); }
+bool is_GPIOE_not_ready() { return (GPIOE->OTYPER == 0xFFFFFFFF); }
+bool is_GPIOH_not_ready() { return (GPIOH->OTYPER == 0xFFFFFFFF); }

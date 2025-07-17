@@ -30,7 +30,6 @@ void handle_pcp_packet(PCPDevice *pcp, char chunk[]) {
             float payload[1];
             // payload[0] = adc_readVoltage(adc_readCurrent(??, ??)) / RESISTANCE_VALUE_OHMS;
             // TODO: use adc peripheral calls to read the current
-            // Here be Dragons
             pcp_transmit(&pcp, &payload, sizeof(float));
             break;
           case 'D':
@@ -50,5 +49,6 @@ void handle_pcp_packet(PCPDevice *pcp, char chunk[]) {
             pwm_timerOff(timer);
             break;
         }
+    // pcp_transmit(&pcp, "", 1);
     return;
 }
