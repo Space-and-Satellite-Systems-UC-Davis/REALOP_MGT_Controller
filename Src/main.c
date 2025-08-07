@@ -17,23 +17,24 @@ int main(void)
 
 
   //Length of chunks being sent in bytes between PFC, Radio, and Ground
-  #define CHUNK_LENGTH 8
+  #define CHUNK_LENGTH 16
   //Time between upload requests in seconds
   #define WAIT_INTERVAL 5
 
 	PCPDevice pcp;
-	make_pcpdev(&pcp, USART1);
+	if (make_pcpdev(&pcp, USART1)) {
+    usart_transmitBytes(USART1, "BAD_PCPDEV", 11);
+  }
 
 	uint8_t chunk[CHUNK_LENGTH];
-
+  pcp_transmit(&pcp, "hello?", 7);
 	uint64_t start_time = getSysTime();
-    pcp_transmit(&pcp, "hello?", 7);
     while(1) {
-    	nop(1);
-      // gpio_high(USART1, )
+      delay_ms(10);
     	int read_status = pcp_read(&pcp, chunk);
-    	if (read_status != -1) {
+    	if (read_status < 0) {
     		handle_pcp_packet(&pcp, chunk);
     	}
+      pcp_retransmit(&pcp);
     }
 }
