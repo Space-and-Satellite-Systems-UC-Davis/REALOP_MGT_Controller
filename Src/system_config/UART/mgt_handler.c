@@ -1,4 +1,4 @@
-#include "UART/pcp_handler.h"
+#include "UART/mgt_handler.h"
 
 TIM_TypeDef *get_timer_from_number(int n) {
     switch (n) {
@@ -13,7 +13,7 @@ TIM_TypeDef *get_timer_from_number(int n) {
     }
 }
 
-void handle_pcp_packet(PCPDevice *pcp, char chunk[]) {
+void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int coil_number;
     int pwm;
     int percentage;
@@ -33,7 +33,7 @@ void handle_pcp_packet(PCPDevice *pcp, char chunk[]) {
             payload[0] = 42.0;
             // payload[0] = adc_readVoltage(adc_readCurrent(??, ??)) / RESISTANCE_VALUE_OHMS;
             // TODO: use adc peripheral calls to read the current
-            pcp_transmit(pcp, payload, sizeof(float));
+            crc_transmit(bus, payload, sizeof(float));
             break;
           case 'D':
             // pwm_disableChannel(DRV0_PWM0);

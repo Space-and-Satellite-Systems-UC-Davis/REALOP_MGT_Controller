@@ -2,7 +2,7 @@
 #include <print_scan.h>
 #include "platform_init.h"
 #include "Timers/timers.h"
-#include "UART/pcp_handler.h"
+#include "UART/mgt_handler.h"
 
 
 
@@ -21,19 +21,11 @@ int main(void)
   //Time between upload requests in seconds
   #define WAIT_INTERVAL 5
 
-	PCPDevice pcp;
-	if (make_pcpdev(&pcp, USART1)) {
-    usart_transmitBytes(USART1, "BAD_PCPDEV", 11);
-  }
-
 	uint8_t chunk[CHUNK_LENGTH];
-  pcp_transmit(&pcp, "hello?", 7);
-	uint64_t start_time = getSysTime();
     while(1) {
-    	int read_status = pcp_read(&pcp, chunk);
-    	if (read_status < 0) {
-    		handle_pcp_packet(&pcp, chunk);
+    	int read_status = crc_read(USART1, chunk);
+    	if (read_status >= 0) {
+    		handle_packet(USART1, chunk);
     	}
-      pcp_retransmit(&pcp);
     }
 }
