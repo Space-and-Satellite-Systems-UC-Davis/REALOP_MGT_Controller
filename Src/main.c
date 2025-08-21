@@ -30,7 +30,6 @@ int main(void)
   pcp_transmit(&pcp, "hello?", 7);
 	uint64_t start_time = getSysTime();
     while(1) {
-      delay_ms(10);
     	int read_status = pcp_read(&pcp, chunk);
     	if (read_status < 0) {
     		handle_pcp_packet(&pcp, chunk);
