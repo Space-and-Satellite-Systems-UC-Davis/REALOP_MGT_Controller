@@ -15,9 +15,9 @@ int main(void)
   init_platform();
   usart_init(USART1, 9600);
 
-
-  //Length of chunks being sent in bytes between PFC, Radio, and Ground
-  #define CHUNK_LENGTH 16
+  //Length of chunks being sent in bytes between PFC and MGT
+  #define CHUNK_LENGTH 256
+  
   //Time between upload requests in seconds
   #define WAIT_INTERVAL 5
 

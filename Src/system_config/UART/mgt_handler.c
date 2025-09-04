@@ -18,8 +18,6 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int pwm;
     int percentage;
     int timer_number;
-    // usart_transmitBytes(USART1, chunk, 8);
-    // usart_transmitBytes(USART1, "<<<<", 5);
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';
@@ -52,5 +50,6 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             // pwm_timerOff(timer);
             break;
         }
+    crc_transmit(USART1, "THANKS!", 8);
     return;
 }
