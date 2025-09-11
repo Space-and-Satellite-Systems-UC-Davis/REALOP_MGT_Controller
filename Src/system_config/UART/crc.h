@@ -14,6 +14,11 @@
 #include <UART/uart.h>
 
 /**
+ * Calculate the CRC remainder to be appended 
+ */
+uint8_t crc_remainder(uint8_t payload[], int nbytes);
+
+/**
  * Transmit a message. 
  *
  * @param dev

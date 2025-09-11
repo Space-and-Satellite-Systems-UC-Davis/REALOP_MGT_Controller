@@ -50,6 +50,5 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             // pwm_timerOff(timer);
             break;
         }
-    crc_transmit(USART1, "THANKS!", 8);
     return;
 }
