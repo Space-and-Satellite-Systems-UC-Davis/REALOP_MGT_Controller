@@ -23,7 +23,7 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             coil_number = chunk[1] - '0';
             pwm = chunk[3] - '0';
             percentage = 10 * (chunk[5] - '0') + (chunk[6] - '0');
-            // pwm_setDutyCycle(coil_number * 2 + pwm, percentage);
+            pwm_setDutyCycle(coil_number * 2 + pwm, percentage);
             break;
           case 'C':
             coil_number = chunk[1] - '0';
@@ -34,20 +34,20 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             crc_transmit(bus, payload, sizeof(float));
             break;
           case 'D':
-            // pwm_disableChannel(DRV0_PWM0);
-            // pwm_disableChannel(DRV0_PWM1);
-            // pwm_disableChannel(DRV1_PWM0);
-            // pwm_disableChannel(DRV1_PWM1);
-            // pwm_disableChannel(DRV2_PWM0);
-            // pwm_disableChannel(DRV2_PWM1);
-            // pwm_timerOff(PWMTimerDRV0);
-            // pwm_timerOff(PWMTimerDRV1);
-            // pwm_timerOff(PWMTimerDRV2);
+            pwm_disableChannel(DRV0_PWM0);
+            pwm_disableChannel(DRV0_PWM1);
+            pwm_disableChannel(DRV1_PWM0);
+            pwm_disableChannel(DRV1_PWM1);
+            pwm_disableChannel(DRV2_PWM0);
+            pwm_disableChannel(DRV2_PWM1);
+            pwm_timerOff(PWMTimerDRV0);
+            pwm_timerOff(PWMTimerDRV1);
+            pwm_timerOff(PWMTimerDRV2);
             break;
           case 'T':
             timer_number = chunk[1] - '0';
             TIM_TypeDef *timer = get_timer_from_number(timer_number);
-            // pwm_timerOff(timer);
+            pwm_timerOff(timer);
             break;
         }
     return;

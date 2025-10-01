@@ -16,7 +16,7 @@ int main(void)
   usart_init(USART1, 9600);
 
   //Length of chunks being sent in bytes between PFC and MGT
-  #define CHUNK_LENGTH 256
+  #define CHUNK_LENGTH 8
   
   //Time between upload requests in seconds
   #define WAIT_INTERVAL 5
