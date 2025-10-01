@@ -1,5 +1,5 @@
-#ifndef PCP_HANDLER
-#define PCP_HANDLER
+#ifndef _MGT_HANDLER_
+#define _MGT_HANDLER_
 
 #include "UART/crc.h"
 #include "PWM/pwm_timer.h"
@@ -8,4 +8,4 @@
 
 void handle_packet(USART_TypeDef *bus, char chunk[]);
 
-#endif // PCP_HANDLER
+#endif // _MGT_HANDLER_
