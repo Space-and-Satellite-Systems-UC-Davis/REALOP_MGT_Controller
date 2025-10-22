@@ -22,10 +22,10 @@ int main(void)
   #define WAIT_INTERVAL 5
 
 	uint8_t chunk[CHUNK_LENGTH];
-    while(1) {
-    	int read_status = crc_read(USART1, chunk);
-    	if (read_status >= 0) {
-    		handle_packet(USART1, chunk);
-    	}
-    }
+  while(1) {
+   	int read_status = crc_read(USART1, chunk);
+   	if (read_status > 0) {
+   		handle_packet(USART1, chunk);
+   	}
+  }
 }

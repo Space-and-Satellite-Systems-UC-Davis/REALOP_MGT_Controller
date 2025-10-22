@@ -20,7 +20,7 @@
 uint8_t crc_remainder(uint8_t payload[], int nbytes) {
     uint8_t remainder = 0;
 
-    for (int byte_index = 0; byte_index < nbytes && payload[byte_index + 1] != ';'; byte_index++) {
+    for (int byte_index = 0; byte_index < nbytes && payload[byte_index] != ';'; byte_index++) {
         remainder ^= payload[byte_index];
 
         for (uint8_t bit = 8; bit > 0; bit--) {
@@ -32,7 +32,6 @@ uint8_t crc_remainder(uint8_t payload[], int nbytes) {
             }
         }
     }
-
     return remainder;
 }
 
@@ -47,8 +46,8 @@ void crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
 int crc_read(USART_TypeDef *bus, uint8_t* buf) {
     uint8_t buffer[MAX_MESSAGE_BYTES];
     int size = usart_receiveBytes(bus, buffer, MAX_MESSAGE_BYTES);
-    if (size <= 0) return -1;
-    if (!crc_remainder(buffer, size)) return -1;
+    if (size <= 0) return -2;
+    if (crc_remainder(buffer, size)) return -1;
     memcpy(buf, buffer, size - CRC_CHECK_SIZE);
     return size;
 }
