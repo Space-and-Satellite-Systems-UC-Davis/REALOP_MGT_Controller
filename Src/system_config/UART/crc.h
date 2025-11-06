@@ -13,19 +13,23 @@
 
 #include <UART/uart.h>
 
-/**
- * Calculate the CRC remainder to be appended 
- */
-uint8_t crc_remainder(uint8_t payload[], int nbytes);
+#define POLYAL 0xD8
+#define MAX_PAYLOAD_BYTES 254
+#define CRC_CHECK_SIZE sizeof(uint8_t)
+#define MAX_INTERNAL_BYTES MAX_PAYLOAD_BYTES + CRC_CHECK_SIZE + sizeof(char)
+#define MAX_MESSAGE_BYTES ( MAX_INTERNAL_BYTES ) / 2
 
 /**
- * Transmit a message. 
+ * Transmit a message. Assumes the message is small enough
+ * (< 128 bytes, can be as large as 253 bytes if the message doesn't require breaks)
  *
- * @param dev
+ * @param bus
  * @param payload
  * @param nbytes
+ * 
+ * @returns boolean, whether the message was received (as measured by receipt of an ACK packet)
  */
-void crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes);
+bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes);
 
 /**
  * Read a response into `buf`. Assume that `buf` is large enough

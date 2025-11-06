@@ -4,23 +4,37 @@
 * Author:           James Knepper  
 * Created:          2025-08-20 1900
 * Description:      See crc.h
-*****************************************************************************/
+******************************************************************************/
 
 #include "UART/crc.h"
-#include <stdio.h>
+#include <string.h>
+#include "print_scan.h"
 
-#define POLYAL 0xD8
-#define MAX_PAYLOAD_BYTES 255
-#define CRC_CHECK_SIZE sizeof(uint8_t)
-#define MAX_MESSAGE_BYTES MAX_PAYLOAD_BYTES + CRC_CHECK_SIZE
+int crc_wait(USART_TypeDef *bus) {
+    uint8_t ack = '\0';
+    int count = usart_receiveBytes(bus, &ack, 1);
+    return (ack == 'A') - (count != 1); // receives nothing -> -1, receives noise -> 0, receives ACK -> 1.
+}
+
+void crc_ack(USART_TypeDef *bus) {
+    usart_transmitBytes(bus, "A", 1);
+}
 
 /**
  * Calculate the CRC remainder to be appended 
  */
 uint8_t crc_remainder(uint8_t payload[], int nbytes) {
     uint8_t remainder = 0;
-
-    for (int byte_index = 0; byte_index < nbytes && payload[byte_index] != ';'; byte_index++) {
+    bool unbroken = true;
+    for (int byte_index = 0; byte_index < nbytes; byte_index++) {
+        if (payload[byte_index] == '\\' && unbroken) {
+            unbroken = false;
+            continue;
+        }
+        if (payload[byte_index] == ';' && unbroken) {
+            return remainder;
+        }
+        unbroken = true;
         remainder ^= payload[byte_index];
 
         for (uint8_t bit = 8; bit > 0; bit--) {
@@ -32,22 +46,55 @@ uint8_t crc_remainder(uint8_t payload[], int nbytes) {
             }
         }
     }
+
     return remainder;
 }
 
-void crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
-    uint8_t buffer[MAX_MESSAGE_BYTES];
-    memcpy(buffer, payload, nbytes);
-    buffer[nbytes] = crc_remainder(buffer, nbytes);
-    usart_transmitBytes(bus, buffer, nbytes + CRC_CHECK_SIZE);
-    usart_transmitBytes(bus, ";", 1);
+bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
+    uint8_t buffer[MAX_INTERNAL_BYTES];
+    uint8_t breaks = 0;
+    memset(buffer, 0, MAX_INTERNAL_BYTES);
+    for (int index = 0; index < nbytes; index++){
+        if (payload[index] == ';' || payload[index] == '\\') {
+            buffer[index + breaks] = '\\';
+            breaks++;
+        } 
+        buffer[index + breaks] = payload[index];
+    }
+    uint8_t remainder = crc_remainder(buffer, nbytes + breaks);
+    if (remainder == '\\' || remainder == ';') {
+        buffer[nbytes + breaks] = '\\';
+        breaks++;
+    }
+    buffer[nbytes + breaks] = remainder;
+    buffer[nbytes + breaks + 1] = ';';
+    bool ack = false;
+    for (int attempts = 0; attempts < 5; attempts++) {
+        usart_transmitBytes(bus, buffer, nbytes + breaks + 1 + 1);
+        ack = crc_wait(bus);
+        if (ack == 0) attempts--;
+        if (ack == 1) break;
+    }
+    return ack;
 }
 
 int crc_read(USART_TypeDef *bus, uint8_t* buf) {
     uint8_t buffer[MAX_MESSAGE_BYTES];
     int size = usart_receiveBytes(bus, buffer, MAX_MESSAGE_BYTES);
-    if (size <= 0) return -2;
+    if (size <= 0) return -1;
     if (crc_remainder(buffer, size)) return -1;
-    memcpy(buf, buffer, size - CRC_CHECK_SIZE);
-    return size;
+    crc_ack(bus);
+    int breaks = 0;
+    for (int index = 0; index + breaks < size; index++) {
+        if (buffer[index + breaks] == '\\') {
+            breaks++;
+            buf[index] = buffer[index + breaks];
+            continue;
+        }
+        if (buffer[index + breaks] == ';') {
+            return index - 1;
+        }
+        buf[index] = buffer[index + breaks];
+    }
+    return size - breaks - 1;
 }
