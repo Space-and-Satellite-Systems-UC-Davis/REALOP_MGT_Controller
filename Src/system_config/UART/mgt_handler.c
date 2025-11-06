@@ -49,6 +49,9 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             TIM_TypeDef *timer = get_timer_from_number(timer_number);
             pwm_timerOff(timer);
             break;
+          case 'K':
+            // TODO: Here Be Dragons
+            break;
         }    
     return;
 }
