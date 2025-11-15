@@ -44,6 +44,7 @@ struct _rx_fifo {
 };
 typedef struct _rx_fifo USART_ReceiverBuffer;
 
+
 #if OP_REV == 1
 
 USART_ReceiverBuffer USART1_RxBuffer;
@@ -503,7 +504,7 @@ void LPUART1_IRQHandler() {
 	if (LPUART1->ISR & USART_ISR_RXNE) {
 		LPUART1->ISR &= ~USART_ISR_RXNE;
 #if OP_REV == 2 || OP_REV == 3
-		enqueueBuffer(LPUART1_RxBuffer, LPUART1)
+		enqueueBuffer(LPUART1_RxBuffer, LPUART1);
 #endif
 	}
 	if (LPUART1->ISR & USART_ISR_RTOF) {
