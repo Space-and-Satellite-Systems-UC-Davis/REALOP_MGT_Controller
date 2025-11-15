@@ -1,4 +1,4 @@
-#include "UART/mgt_handler.h"
+#include "mgt_handler.h"
 
 TIM_TypeDef *get_timer_from_number(int n) {
     switch (n) {

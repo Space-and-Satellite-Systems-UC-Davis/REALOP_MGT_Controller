@@ -2,8 +2,7 @@
 #include <print_scan.h>
 #include "platform_init.h"
 #include "Timers/timers.h"
-#include "UART/mgt_handler.h"
-
+#include "peripherals/Intercomm/mgt_handler.h"
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
