@@ -27,6 +27,9 @@ void coils_setup() {
     Coil_2.en_pwm = DRV2_PWM1;
     
     pwm_init();
+    pwm_initTimer(DRV0_PWM1, 100000);
+    pwm_initTimer(DRV1_PWM1, 100000);
+    pwm_initTimer(DRV2_PWM1, 100000);
     coils_gpioSetup();
 }
 
@@ -86,16 +89,20 @@ void coils_disablePWM(COILS coil) {
     }
 }
 
+
 void coils_on(COILS coil) {
     switch(coil) {
         case COIL0:
-            gpio_high(Coil_0.dir_port, Coil_0.dir_pin);
+            gpio_high(GPIOA, 0); //The same pins as the PWM 
+            coils_disablePWM(COIL0);
             break;
         case COIL1:
-            gpio_high(Coil_1.dir_port, Coil_1.dir_pin);
+            gpio_high(GPIOB, 10);
+            coils_disablePWM(COIL1);
             break;
         case COIL2:
-            gpio_high(Coil_2.dir_port, Coil_2.dir_pin);
+            gpio_high(GPIOA, 8);
+            coils_disablePWM(COIL2);
             break;
     }
 }
@@ -103,13 +110,16 @@ void coils_on(COILS coil) {
 void coils_off(COILS coil) {
     switch(coil) {
         case COIL0:
-            gpio_low(Coil_0.dir_port, Coil_0.dir_pin);
+            gpio_low(GPIOA, 0);
+            coils_disablePWM(COIL0);
             break;
         case COIL1:
-            gpio_low(Coil_1.dir_port, Coil_1.dir_pin);
+            gpio_low(GPIOB, 10);
+            coils_disablePWM(COIL1);
             break;
         case COIL2:
-            gpio_low(Coil_2.dir_port, Coil_2.dir_pin);
+            gpio_low(GPIOA, 8);
+            coils_disablePWM(COIL2);
             break;
     }
 }
