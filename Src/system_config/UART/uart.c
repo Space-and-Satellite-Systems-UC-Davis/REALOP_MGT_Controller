@@ -151,7 +151,10 @@ void usart1_gpio_init() {
 	GPIOB->AFR[0] |= (7U << GPIO_AFRL_AFSEL6_Pos) | (7U << GPIO_AFRL_AFSEL7_Pos);
 #elif OP_REV == 3 
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
-	wait_with_timeout(is_GPIOB_not_ready, DEFAULT_TIMEOUT_MS);
+	wait_with_timeout(is_GPIOB_not_ready, DEFAULT_TIMEOUT_MS);	
+
+	GPIOB->PUPDR &= ~(GPIO_PUPDR_PUPD6_Msk | GPIO_PUPDR_PUPD7_Msk);
+	GPIOB->PUPDR |= (GPIO_PUPDR_PULL_DOWN << GPIO_PUPDR_PUPD6_Pos | GPIO_PUPDR_PULL_DOWN << GPIO_PUPDR_PUPD7_Pos);
 
 
 	// configure the USART Pins to Alternate Function mode

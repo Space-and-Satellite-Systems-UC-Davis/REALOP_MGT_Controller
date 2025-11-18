@@ -25,7 +25,7 @@ int main(void)
     memset(chunk, '?', CHUNK_LENGTH);
    	int read_status = crc_read(USART1, chunk);
    	if (read_status > 0) {
-   		handle_packet(USART1, chunk);
+   		  handle_packet(USART1, chunk);
    	}
   }
 }

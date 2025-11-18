@@ -18,13 +18,25 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int pwm;
     int percentage;
     int timer_number;
+    int direction; 
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';
             percentage = chunk[3];
             coils_setDuty(coil_number, percentage);
-            coils_enablePWM(coil_number);
+            if (percentage != 100) {
+              coils_enablePWM(coil_number);
+            }
 
+            break;
+          case 'W':
+            coil_number = chunk[1] - '0';
+            direction = chunk[3];
+            if (direction == 'H') {
+              coils_setDir(coil_number, HIGH);
+            } else {
+              coils_setDir(coil_number, LOW);
+            }
             break;
           case 'C':
             coil_number = chunk[1] - '0';

@@ -65,7 +65,7 @@ void coils_setDuty(COILS coil, int duty) {
             break;
         case COIL2:
             if (duty == 100) {
-                coils_on(COIL0);
+                coils_on(COIL2);
             } else {
                 pwm_setDutyCycle(Coil_2.en_pwm, duty);
             }
