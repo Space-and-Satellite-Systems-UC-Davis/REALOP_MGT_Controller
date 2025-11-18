@@ -18,12 +18,25 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int pwm;
     int percentage;
     int timer_number;
+    int direction; 
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';
-            pwm = chunk[3] - '0';
-            percentage = 10 * (chunk[5] - '0') + (chunk[6] - '0');
-            pwm_setDutyCycle(coil_number * 2 + pwm, percentage);
+            percentage = chunk[3];
+            coils_setDuty(coil_number, percentage);
+            if (percentage != 100) {
+              coils_enablePWM(coil_number);
+            }
+
+            break;
+          case 'W':
+            coil_number = chunk[1] - '0';
+            direction = chunk[3];
+            if (direction == 'H') {
+              coils_setDir(coil_number, HIGH);
+            } else {
+              coils_setDir(coil_number, LOW);
+            }
             break;
           case 'C':
             coil_number = chunk[1] - '0';
@@ -34,15 +47,19 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             crc_transmit(bus, payload, sizeof(float));
             break;
           case 'D':
-            pwm_disableChannel(DRV0_PWM0);
-            pwm_disableChannel(DRV0_PWM1);
-            pwm_disableChannel(DRV1_PWM0);
-            pwm_disableChannel(DRV1_PWM1);
-            pwm_disableChannel(DRV2_PWM0);
-            pwm_disableChannel(DRV2_PWM1);
+
+            coils_disablePWM(COIL0);
+            coils_disablePWM(COIL1);
+            coils_disablePWM(COIL2);
+
+            coils_off(COIL0);
+            coils_off(COIL1);
+            coils_off(COIL2);
+
             pwm_timerOff(PWMTimerDRV0);
             pwm_timerOff(PWMTimerDRV1);
             pwm_timerOff(PWMTimerDRV2);
+
             break;
           case 'T':
             timer_number = chunk[1] - '0';
