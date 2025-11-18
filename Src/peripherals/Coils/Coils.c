@@ -50,13 +50,25 @@ void coils_setDir(COILS coil, DIRECTION dir) {
 void coils_setDuty(COILS coil, int duty) {
     switch(coil) {
         case COIL0:
-            pwm_setDutyCycle(Coil_0.en_pwm, duty);
+            if (duty == 100) {
+                coils_on(COIL0);
+            } else {
+                pwm_setDutyCycle(Coil_0.en_pwm, duty);
+            }
             break;
         case COIL1:
-            pwm_setDutyCycle(Coil_1.en_pwm, duty);
+            if (duty == 100) {
+                coils_on(COIL1);
+            } else {
+                pwm_setDutyCycle(Coil_1.en_pwm, duty);
+            }
             break;
         case COIL2:
-            pwm_setDutyCycle(Coil_2.en_pwm, duty);
+            if (duty == 100) {
+                coils_on(COIL0);
+            } else {
+                pwm_setDutyCycle(Coil_2.en_pwm, duty);
+            }
             break;
     }
 }
