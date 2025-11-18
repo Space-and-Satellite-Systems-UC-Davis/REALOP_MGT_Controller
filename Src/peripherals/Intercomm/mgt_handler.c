@@ -21,7 +21,7 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';
-            percentage = 10 * (chunk[3] - '0') + (chunk[4] - '0');
+            percentage = chunk[3];
             coils_setDuty(coil_number, percentage);
             coils_enablePWM(coil_number);
 

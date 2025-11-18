@@ -18,7 +18,7 @@ int main(void)
 {
   init_platform();
   usart_init(USART1, 9600);
-
+  coils_setup();
 
 	uint8_t chunk[CHUNK_LENGTH];
   while(1) {
