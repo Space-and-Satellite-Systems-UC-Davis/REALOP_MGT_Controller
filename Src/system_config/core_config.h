@@ -22,5 +22,7 @@
  * @returns None
  */
 void init_coreClocks();
+void backup_domain_controlEnable();
+void backup_domain_controlDisable();
 
 #endif /* REALOP1_CORE_CONFIG_H_ */

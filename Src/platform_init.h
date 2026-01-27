@@ -19,6 +19,7 @@
 #include <print_scan.h>
 #include <PWM/pwm_timer.h>
 #include <Sleep/sleep.h>
+#include <RTC/rtc.h>
 
 
 /**
