@@ -38,6 +38,7 @@ typedef struct _rx_fifo USART_ReceiverBuffer;
 
 USART_ReceiverBuffer USART1_RxBuffer;
 USART_ReceiverBuffer LPUART1_RxBuffer;
+USART_ReceiverBuffer USART3_RxBuffer;
 
 //	if (bus == USART1) {
 //		rxbuff = &USART1_RxBuffer;
@@ -73,6 +74,22 @@ void usart1_gpio_init() {
 	// configure each pin to AF7
 	GPIOB->AFR[0] &= ~(GPIO_AFRL_AFSEL6_Msk | GPIO_AFRL_AFSEL7_Msk);
 	GPIOB->AFR[0] |= (7U << GPIO_AFRL_AFSEL6_Pos) | (7U << GPIO_AFRL_AFSEL7_Pos);
+	return;
+}
+
+void usart3_gpio_init() {
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;
+	while (GPIOC->OTYPER == 0xFFFFFFFF);
+
+
+	// configure the USART Pins to Alternate Function mode
+	GPIOC->MODER &= ~(GPIO_MODER_MODE4_Msk | GPIO_MODER_MODE5_Msk);
+	GPIOC->MODER |= (GPIO_MODER_MODE4_1 | GPIO_MODER_MODE5_1);
+
+
+	// configure each pin to AF7
+	GPIOC->AFR[0] &= ~(GPIO_AFRL_AFSEL6_Msk | GPIO_AFRL_AFSEL7_Msk);
+	GPIOC->AFR[0] |= (7U << GPIO_AFRL_AFSEL6_Pos) | (7U << GPIO_AFRL_AFSEL7_Pos);
 	return;
 }
 
@@ -120,6 +137,12 @@ bool usart_init(USART_TypeDef *bus, int baud_rate) {
 			usart1_gpio_init();
 			uart_8bit_1stop(USART1, baud_rate, true);
 			NVIC_EnableIRQ(USART1_IRQn);
+			break;
+		case (int)USART2:
+			RCC->APB1ENR1 |= RCC_APB1ENR1_USART2EN;
+			usart2_gpio_init();
+			uart_8bit_1stop(USART2, baud_rate, true);
+			NVIC_EnableIRQ(USART2_IRQn);
 			break;
 		default:
 			return false;
@@ -211,3 +234,15 @@ void USART1_IRQHandler() {
 	}
 }
 
+
+
+void USART3_IRQHandler() {
+	if (USART3->ISR & USART_ISR_RXNE) {
+		USART3->ISR &= ~USART_ISR_RXNE;
+		enqueueBuffer(USART3_RxBuffer, USART3);
+	}
+	if (USART3->ISR & USART_ISR_RTOF) {
+		USART3->ISR &= ~USART_ISR_RTOF;
+		USART3_RxBuffer.timedout = true;
+	}
+}
