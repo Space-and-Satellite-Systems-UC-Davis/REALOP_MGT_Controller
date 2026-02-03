@@ -181,15 +181,27 @@ void adc_init() {
     // ADC3_init();
     ADC1_COMMON->CCR |= ADC_CCR_VREFEN;
 
-    VREFBUF->CSR |= VREFBUF_CSR_ENVR; //Enables internal reference buffer
-	VREFBUF->CSR &= ~(VREFBUF_CSR_HIZ); //Set to internal voltage reference mode (this is default high)
+    // Internal voltage reference buffer not available
+    // VREFBUF->CSR |= VREFBUF_CSR_ENVR; //Enables internal reference buffer
+	// VREFBUF->CSR &= ~(VREFBUF_CSR_HIZ); //Set to internal voltage reference mode (this is default high)
 
-	while(!(VREFBUF->CSR & VREFBUF_CSR_VRR)); //Waits until voltage reference value reaches expected output
-	VREFBUF->CSR |= VREFBUF_CSR_VRS; //Sets internal reference buffer to around 2.5V
+    VREFBUF->CSR &= ~(VREFBUF_CSR_ENVR);    // Disable internal reference buffer
+    VREFBUF->CSR |= VREFBUF_CSR_HIZ;        // Set to External voltage reference mode (VREF+ pin input mode)
+
+
+	// while(!(VREFBUF->CSR & VREFBUF_CSR_VRR)); //Waits until voltage reference value reaches expected output
+	// VREFBUF->CSR |= VREFBUF_CSR_VRS; //Sets internal reference buffer to around 2.5V
 
 
 }
 
+/**
+ * @param adc   ADC1 global
+ * @param channel   2,3, or 4 according to the pin being read
+ * Drv0 PC1 ADC1_IN2 - Channel 2;
+ * Drv1 PC2 ADC1_IN3 - Channel 3;
+ * Drv2 PC3 ADC1_IN4 - Channel 4
+ */
 uint16_t adc_readChannel(ADC_TypeDef* adc, int channel) {
    adc->CR &= ~ADC_CR_ADSTART;
    adc->SQR1 |= channel << ADC_SQR1_SQ1_Pos; //Set the channel in sequence to be converted
@@ -231,8 +243,13 @@ uint16_t adc_readChannel(ADC_TypeDef* adc, int channel) {
 	return adc_val;
 }
 
+/**
+ * @param channelReading 12 bit reading from ADC data register output from adc_readChannel()   
+ * 
+ * @return reading in Voltage
+ */
 float adc_readVoltage(uint16_t channelReading) {
-    return (channelReading / MAX_12_BIT_READING) * INTERNAL_VOLTAGE_REFERENCE;
+    return (channelReading / MAX_12_BIT_READING) * EXTERNAL_VOLTAGE_REFERENCE;
 }
 
 /** Public Functions */
