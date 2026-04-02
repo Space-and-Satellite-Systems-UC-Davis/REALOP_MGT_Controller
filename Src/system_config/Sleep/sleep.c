@@ -12,7 +12,7 @@ void sleep_init() {
 	SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
 	// __DSB();
 	__WFI();
-	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk; // Disable the systick
+	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk; // Enable the systick
 }
 
 void lowPowerSleep_init() {
@@ -24,18 +24,19 @@ void lowPowerSleep_init() {
 	__WFI();	
 
 	PWR->CR1 &= ~PWR_CR1_LPR_Msk; //leave low power mode
-	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk; // Disable the systick
+	SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk; // Enable the systick
 }
 
 void stop0_init() {
 	// USART1->CR1; // make usart able to wake up stop mode
+	USART3->CR3 |= USART_CR3_UCESM;
 	RCC->CR |= RCC_CR_HSIKERON; // keep HSI clock on during sleep mode
 	RCC->CFGR &= ~RCC_CFGR_STOPWUCK; // make sure the cpu is set to main clock on wakeup
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 	PWR->CR1 &= ~PWR_CR1_LPMS; //set the LPMS bit to "000"
-	USART1->CR1 |= USART_CR1_UESM;
+	USART3->CR1 |= USART_CR1_UESM;
 	__WFI();
-	USART1->CR1 &= ~USART_CR1_UESM;
+	USART3->CR1 &= ~USART_CR1_UESM;
 
 
 }
