@@ -11,6 +11,7 @@
  */
 
 #include "rtc.h"
+#include "GPIO/gpio.h"
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Callbacks for the timers are stored here.
