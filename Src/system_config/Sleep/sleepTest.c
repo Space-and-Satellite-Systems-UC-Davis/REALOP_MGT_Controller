@@ -3,7 +3,7 @@
 
 
 bool is_DBP_not_set() { return (PWR->CR1 & PWR_CR1_DBP) == 0; }
-void testFunction_Sleep() {
+void testFunction_Sleep(int sleepMode) {
     // init stuff
     init_platform();
     usart_init(USART3, 9600);
@@ -27,7 +27,19 @@ void testFunction_Sleep() {
     }
     EXTI->PR1 = 0;
     EXTI->PR2 = 0;
-    sleep_init();
+    switch(sleepMode) {
+        case SLEEP:
+            sleep_init();
+            break;
+        case LPSLEEP:
+            lowPowerSleep_init();
+            break;
+        case STOP0:
+            stop0_init();
+            break;
+        default:
+            break;
+    }
     for(int i = 0; i < 20; i++) {
         gpio_low(GPIOB, 0);
         delay_ms(250);

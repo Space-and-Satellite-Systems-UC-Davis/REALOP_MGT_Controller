@@ -12,6 +12,9 @@
 #define USART3_WAKEUP 28
 #define UART4_WAKEUP 29
 #define LPUART1_WAKEUP 31
+#define SLEEP 0
+#define LPSLEEP 1
+#define STOP0 2
 
 // end testing stuff
 
