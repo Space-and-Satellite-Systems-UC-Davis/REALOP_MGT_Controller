@@ -70,7 +70,7 @@ USART_ReceiverBuffer LPUART1_RxBuffer = (USART_ReceiverBuffer){
 #endif
 
 
-USART_ReceiverBuffer* uart_revisionBusDistinguisher(USART_TypeDef *bus) {
+USART_ReceiverBuffer* uart_revisionBusDistinguisher(const USART_TypeDef *bus) {
 	USART_ReceiverBuffer *rxbuff = NULL;
 
 #if OP_REV == 1
@@ -93,7 +93,7 @@ USART_ReceiverBuffer* uart_revisionBusDistinguisher(USART_TypeDef *bus) {
 }
 
 #define enqueueBuffer(buff,usart) buff.buffer[buff.rear] = usart->RDR; \
-							      buff.rear = (buff.rear + 1) % ReceiveBufferLen;
+							      buff.rear = (buff.rear + 1) % ReceiveBufferLen
 
 /************************ GPIO INITIALIZATION HELPERS ************************/
 
