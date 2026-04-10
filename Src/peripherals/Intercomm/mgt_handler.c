@@ -27,7 +27,6 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             if (percentage != 100) {
               coils_enablePWM(coil_number);
             }
-
             break;
           case 'W':
             coil_number = chunk[1] - '0';
@@ -61,10 +60,10 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             pwm_timerOff(PWMTimerDRV2);
 
             break;
-          case 'T':
+          case 'F': case 'T':
             timer_number = chunk[1] - '0';
             TIM_TypeDef *timer = get_timer_from_number(timer_number);
-            pwm_timerOff(timer);
+            chunk[0] == 'F' ? pwm_timerOff(timer) : pwm_timerOn(timer);
             break;
         }    
     return;

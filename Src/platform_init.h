@@ -34,6 +34,8 @@ void init_platform() {
 	led_init();
 	// printer_init();
 	systick_init();
+	usart_init(USART1, 9600);
+  	coils_setup();
 }
 
 #endif // REALOP1_PLATFORM_INIT_H
