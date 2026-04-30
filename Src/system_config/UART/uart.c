@@ -44,6 +44,7 @@ struct _rx_fifo {
 };
 typedef struct _rx_fifo USART_ReceiverBuffer;
 
+
 #if OP_REV == 1
 
 USART_ReceiverBuffer USART1_RxBuffer;
@@ -150,7 +151,10 @@ void usart1_gpio_init() {
 	GPIOB->AFR[0] |= (7U << GPIO_AFRL_AFSEL6_Pos) | (7U << GPIO_AFRL_AFSEL7_Pos);
 #elif OP_REV == 3 
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
-	wait_with_timeout(is_GPIOB_not_ready, DEFAULT_TIMEOUT_MS);
+	wait_with_timeout(is_GPIOB_not_ready, DEFAULT_TIMEOUT_MS);	
+
+	GPIOB->PUPDR &= ~(GPIO_PUPDR_PUPD6_Msk | GPIO_PUPDR_PUPD7_Msk);
+	GPIOB->PUPDR |= (GPIO_PUPDR_PULL_DOWN << GPIO_PUPDR_PUPD6_Pos | GPIO_PUPDR_PULL_DOWN << GPIO_PUPDR_PUPD7_Pos);
 
 
 	// configure the USART Pins to Alternate Function mode
@@ -438,16 +442,11 @@ void usart_flushrx(USART_TypeDef* bus) {
 
 void USART1_IRQHandler() {
 	if (USART1->ISR & USART_ISR_RXNE) {
-		USART1->ISR &= ~USART_ISR_RXNE;
-#if OP_REV == 1 || OP_REV == 2 || OP_REV == 3
 		enqueueBuffer(USART1_RxBuffer, USART1);
-#endif
 	}
 	if (USART1->ISR & USART_ISR_RTOF) {
-		USART1->ISR &= ~USART_ISR_RTOF;
-#if OP_REV == 1 || OP_REV == 2
+		USART1->ICR &= ~USART_ICR_RTOCF;
 		USART1_RxBuffer.timedout = true;
-#endif
 	}
 }
 
@@ -503,7 +502,7 @@ void LPUART1_IRQHandler() {
 	if (LPUART1->ISR & USART_ISR_RXNE) {
 		LPUART1->ISR &= ~USART_ISR_RXNE;
 #if OP_REV == 2 || OP_REV == 3
-		enqueueBuffer(LPUART1_RxBuffer, LPUART1)
+		enqueueBuffer(LPUART1_RxBuffer, LPUART1);
 #endif
 	}
 	if (LPUART1->ISR & USART_ISR_RTOF) {
