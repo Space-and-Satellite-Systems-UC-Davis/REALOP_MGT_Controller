@@ -65,6 +65,9 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             TIM_TypeDef *timer = get_timer_from_number(timer_number);
             chunk[0] == 'F' ? pwm_timerOff(timer) : pwm_timerOn(timer);
             break;
+          case 'K':
+            // TODO: Here Be Dragons
+            break;
         }    
     return;
 }
