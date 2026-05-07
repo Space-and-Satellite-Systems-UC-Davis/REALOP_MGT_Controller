@@ -3,7 +3,6 @@
 #include "platform_init.h"
 #include "Timers/timers.h"
 #include "peripherals/Intercomm/mgt_handler.h"
-#include "ADC/adc.h"  
 
 //Length of chunks being sent in bytes between PFC and MGT
 #define CHUNK_LENGTH 8
@@ -24,12 +23,10 @@ int main(void)
 
 	uint8_t chunk[CHUNK_LENGTH];
   while(1) {
-    // memset(chunk, '?', CHUNK_LENGTH);
-   	// int read_status = crc_read(USART1, chunk);
-   	// if (read_status > 0) {
-   	// 	  handle_packet(USART1, chunk);
-   	// }
-    uint16_t reading = adc_readChannel(ADC1, 2);
-	  float voltage = adc_readVoltage(reading);
+    memset(chunk, '?', CHUNK_LENGTH);
+   	int read_status = crc_read(USART1, chunk);
+   	if (read_status > 0) {
+   		  handle_packet(USART1, chunk);
+   	}
   }
 }
