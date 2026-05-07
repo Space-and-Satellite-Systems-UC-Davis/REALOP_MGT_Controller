@@ -23,7 +23,7 @@ static bool adc_isADRDYNotResetADC1() { return (ADC1->ISR & ADC_ISR_ADRDY) == 0;
 // static bool adc_isConversionOngoingADC1() { return(ADC1->CR & ADC_CR_ADSTART);}
 
 static void adc_enable(ADC_TypeDef* adc){
-	adc->ISR &= ~ADC_ISR_ADRDY; // Set before enabling ADC (clears ADC ready bit)
+	adc->ISR |= ADC_ISR_ADRDY; // Set before enabling ADC (clears ADC ready bit)
 	adc->CR |= ADC_CR_ADEN; //Enables ADC
 
     switch((int) adc) {
