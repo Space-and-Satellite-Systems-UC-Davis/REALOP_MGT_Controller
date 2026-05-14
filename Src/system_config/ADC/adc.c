@@ -4,23 +4,11 @@
 /** Private helper functions */
 
 static bool adc1_isCalibrationDone() { return (ADC1->CR & ADC_CR_ADCAL) != 0; }
-// static bool adc2_isCalibrationDone() { return (ADC2->CR & ADC_CR_ADCAL) != 0; }
-// static bool adc3_isCalibrationDone() { return (ADC3->CR & ADC_CR_ADCAL) != 0; }
 
 static bool adc_isEOCDownADC1() { return !(ADC1->ISR & ADC_ISR_EOC); }
 static bool adc_isEOSDownADC1() { return !(ADC1->ISR & ADC_ISR_EOS); }
 
-// static bool adc_isEOCDownADC2() { return !(ADC2->ISR & ADC_ISR_EOC); }
-// static bool adc_isEOSDownADC2() { return !(ADC2->ISR & ADC_ISR_EOS); }
-
-// static bool adc_isEOCDownADC3() { return !(ADC3->ISR & ADC_ISR_EOC); }
-// static bool adc_isEOSDownADC3() { return !(ADC3->ISR & ADC_ISR_EOS); }
-
 static bool adc_isADRDYNotResetADC1() { return (ADC1->ISR & ADC_ISR_ADRDY) == 0; }
-// static bool adc_isADRDYNotResetADC2() { return (ADC2->ISR & ADC_ISR_ADRDY) == 0; }
-// static bool adc_isADRDYNotResetADC3() { return (ADC3->ISR & ADC_ISR_ADRDY) == 0; }
-
-// static bool adc_isConversionOngoingADC1() { return(ADC1->CR & ADC_CR_ADSTART);}
 
 static void adc_enable(ADC_TypeDef* adc){
 	adc->ISR |= ADC_ISR_ADRDY; // Set before enabling ADC (clears ADC ready bit)
@@ -48,49 +36,6 @@ static void ADC1_gpio_init() {
 
 }
 
-// static void ADC2_gpio_init() {
-//     /**
-//      * Pan1-pd1 PA0  ADC1(2)_IN5
-//      * Pan2-pd0 PA1 ADC1(2)_IN6
-//      * Pan2-pd1 PA2 ADC1(2)_IN7
-//      * Pan4-pd0 PC0 ADC1(2)3_IN1
-//      * Pan4-pd1 PC1 ADC1(2)3_IN2
-//      * Pan5-pd0 PC2 ADC1(2)3_IN3
-//      * Pan5-pc1 PC3 ADC1(2)3_IN4
-//      */
-
-
-
-//     //TODO: change to RCC->AHB2ENR?
-//     RCC->APB2ENR |= RCC_AHB2ENR_GPIOAEN | RCC_AHB2ENR_GPIOCEN;
-
-//     GPIOA->MODER |= GPIO_MODER_MODE0 | GPIO_MODER_MODE1 | GPIO_MODER_MODE2;
-//     GPIOC->MODER |= GPIO_MODER_MODE0 | GPIO_MODER_MODE1 | GPIO_MODER_MODE2 | GPIO_MODER_MODE3;
-
-//     //TODO: complement mask?
-//     GPIOA->PUPDR &= GPIO_PUPDR_PUPD0_Msk | GPIO_PUPDR_PUPD1_Msk | GPIO_PUPDR_PUPD2_Msk;
-//     GPIOC->PUPDR &= GPIO_PUPDR_PUPD0_Msk | GPIO_PUPDR_PUPD1_Msk | GPIO_PUPDR_PUPD2_Msk | GPIO_PUPDR_PUPD3_Msk;
-
-//     GPIOA->ASCR |= GPIO_ASCR_ASC0 | GPIO_ASCR_ASC1 | GPIO_ASCR_ASC2;
-//     GPIOC->ASCR |= GPIO_ASCR_ASC0 | GPIO_ASCR_ASC1 | GPIO_ASCR_ASC2 | GPIO_ASCR_ASC3; 
-
-// }
-
-// static void ADC3_gpio_init() {
-//     /**
-//      * Pan0-pd0 PF3 ADC3_IN6
-//      * Pan0-pd1 PF4 ADC3_IN7
-//      * Pan1-pd0 PF9 ADC3_IN12
-//      * Pan3-pd0 PF7 ADC3_IN10
-//      * Pan3-pd1 PF6 ADC3_IN9
-//      */
-//     RCC->APB2ENR |= RCC_AHB2ENR_GPIOFEN;
-//     GPIOF->MODER |= GPIO_MODER_MODE3 | GPIO_MODER_MODE4 | GPIO_MODER_MODE9 | GPIO_MODER_MODE7 | GPIO_MODER_MODE6;
-//     GPIOF->PUPDR &= GPIO_PUPDR_PUPD3_Msk | GPIO_PUPDR_PUPD4_Msk | GPIO_PUPDR_PUPD9_Msk | GPIO_PUPDR_PUPD7_Msk | GPIO_PUPDR_PUPD6_Msk;
-//     GPIOF->ASCR |= GPIO_ASCR_ASC3 | GPIO_ASCR_ASC4 | GPIO_ASCR_ASC6 | GPIO_ASCR_ASC7 | GPIO_ASCR_ASC9;
-// }
-
-
 static uint8_t adc_calibrateADC(ADC_TypeDef* adc) {
     adc->CR &= ~ADC_CR_DEEPPWD; //makes sure ADC isn't in deep power down mode
 	adc->CR |= ADC_CR_ADVREGEN; //enables ADC voltage regulator
@@ -107,12 +52,6 @@ static uint8_t adc_calibrateADC(ADC_TypeDef* adc) {
         case (int)ADC1:
             wait_with_timeout(adc1_isCalibrationDone, DEFAULT_TIMEOUT_MS);
             break;
-        // case (int)ADC2:
-        //     wait_with_timeout(adc2_isCalibrationDone, DEFAULT_TIMEOUT_MS);
-        //     break;
-        // case (int)ADC3:
-        //     wait_with_timeout(adc3_isCalibrationDone, DEFAULT_TIMEOUT_MS);
-        //     break;
         default:
             break;
     }
@@ -140,30 +79,6 @@ static void ADC1_init() {
     adc_enable(ADC1);
 
 }
-
-// static void ADC2_init() {
-//     ADC2_gpio_init();
-//     adcx_initCommon(ADC2);
-//     ADC2->SMPR1 = 0; 
-
-//     //Set sample rate to slowest rate (640.5) per conversion 
-//     ADC2->SMPR1 |=  ADC_SMPR1_SMP1 | ADC_SMPR1_SMP2  | ADC_SMPR1_SMP3 | ADC_SMPR1_SMP4 | ADC_SMPR1_SMP5 | ADC_SMPR1_SMP6 | ADC_SMPR1_SMP7;
-//     adc_enable(ADC2);
-// }
-
-// static void ADC3_init() {
-//     ADC3_gpio_init();
-//     adcx_initCommon(ADC3);
-
-//     //Set sample rate to slowest rate (640.5) per conversion 
-//     ADC3->SMPR1 = 0; 
-//     ADC3->SMPR1 |=  ADC_SMPR1_SMP6 | ADC_SMPR1_SMP7  | ADC_SMPR1_SMP9;
-//     ADC3->SMPR2 = 0;
-//     ADC3->SMPR2 |= ADC_SMPR2_SMP10 | ADC_SMPR2_SMP12; 
-
-//     adc_enable(ADC3);
-// }
-
 
 /** Private helper functions */
 
@@ -213,12 +128,6 @@ uint16_t adc_readChannel(ADC_TypeDef* adc, int channel) {
         case (int) ADC1:
             wait_with_timeout(adc_isEOCDownADC1, DEFAULT_TIMEOUT_MS);    
             break;
-        // case (int) ADC2:
-        //     wait_with_timeout(adc_isEOCDownADC2, DEFAULT_TIMEOUT_MS);    
-        //     break;
-        // case (int) ADC3:
-        //     wait_with_timeout(adc_isEOCDownADC3, DEFAULT_TIMEOUT_MS);    
-        //     break;
     }
 	// Read the converted value (this also clears the EOC flag).
 	uint16_t adc_val = adc->DR;
@@ -228,12 +137,6 @@ uint16_t adc_readChannel(ADC_TypeDef* adc, int channel) {
         case (int) ADC1:
             wait_with_timeout(adc_isEOSDownADC1, DEFAULT_TIMEOUT_MS);    
             break;
-        // case (int) ADC2:
-        //     wait_with_timeout(adc_isEOSDownADC2, DEFAULT_TIMEOUT_MS);    
-        //     break;
-        // case (int) ADC3:
-        //     wait_with_timeout(adc_isEOSDownADC3, DEFAULT_TIMEOUT_MS);    
-        //     break;
     }
 	adc->ISR |=  ( ADC_ISR_EOS );
 
