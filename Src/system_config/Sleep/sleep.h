@@ -25,6 +25,8 @@ void lowPowerSleep_init();
 void stop0_init();
 
 
+void testFunction_Sleep(int sleepMode);
+
 
 
 

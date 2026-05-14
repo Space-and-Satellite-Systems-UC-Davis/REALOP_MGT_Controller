@@ -78,8 +78,8 @@ void usart1_gpio_init() {
 }
 
 void usart3_gpio_init() {
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;
-	while (GPIOC->OTYPER == 0xFFFFFFFF);
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
+	while (GPIOB->OTYPER == 0xFFFFFFFF);
 
 
 	// configure the USART Pins to Alternate Function mode
