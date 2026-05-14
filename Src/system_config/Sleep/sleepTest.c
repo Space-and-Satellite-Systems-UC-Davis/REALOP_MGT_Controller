@@ -11,7 +11,7 @@
     succeeds if the main MCU test mgtsleep_test passes while this is running
 */
 
-void testFunction_Sleep(int sleepMode) {
+void testFunction_Sleep() {
     // init stuff
 
     usart_init(USART1, 9600);
@@ -20,19 +20,9 @@ void testFunction_Sleep(int sleepMode) {
     while(true) {
         EXTI->PR1 = 0;
         EXTI->PR2 = 0;
-        switch(sleepMode) {
-            case SLEEP:
-                sleep_init();
-                break;
-            case LPSLEEP:
-                lowPowerSleep_init();
-                break;
-            case STOP0:
-                stop0_init();
-                break;
-            default:
-                break;
-        }
+
+        sleep_init();
+
         uint8_t num_in[4] = {0xFF, 0xFF, 0xFF, '\0'};
         while(!usart_recieveBufferNotEmpty(USART1));
         usart_recieveBytes(USART1, num_in, 1);

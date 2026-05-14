@@ -20,12 +20,12 @@
 
 void sleep_init();
 
-void lowPowerSleep_init();
+// void lowPowerSleep_init();
 
-void stop0_init();
+// void stop0_init();
 
 
-void testFunction_Sleep(int sleepMode);
+void testFunction_Sleep();
 
 
 
