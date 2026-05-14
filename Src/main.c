@@ -18,6 +18,9 @@
 int main(void)
 {
   init_platform();
+  usart_init(USART1, 9600);
+  coils_setup();
+  adc_init();
   usart_init(PFC_USART, 9600);
 
   //Length of chunks being sent in bytes between PFC and MGT
