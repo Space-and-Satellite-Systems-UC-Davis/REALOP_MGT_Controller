@@ -32,7 +32,7 @@ void init_platform() {
 	pwm_init();
 
 	led_init();
-	// printer_init();
+	printer_init();
 	systick_init();
 }
 

@@ -80,7 +80,15 @@ bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
 
 int crc_read(USART_TypeDef *bus, uint8_t* buf) {
     uint8_t buffer[MAX_MESSAGE_BYTES];
-    int size = usart_receiveBytes(bus, buffer, MAX_MESSAGE_BYTES);
+    memset(buffer, 0, sizeof(buffer));
+    uint8_t temp[1];
+
+    int size = 0;
+    do{
+        usart_receiveBytes(bus, temp, 1);
+        buffer[size] = temp[0];
+        size++;
+    }while(buffer[size-1] != ';' && size <= 10);
     if (size <= 0) return -1;
     if (crc_remainder(buffer, size)) return -1;
     crc_ack(bus);

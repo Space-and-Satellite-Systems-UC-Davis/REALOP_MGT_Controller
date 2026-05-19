@@ -20,12 +20,5 @@ int main(void)
   usart_init(USART1, 9600);
   coils_setup();
 
-	uint8_t chunk[CHUNK_LENGTH];
-  while(1) {
-    memset(chunk, '?', CHUNK_LENGTH);
-   	int read_status = crc_read(USART1, chunk);
-   	if (read_status > 0) {
-   		  handle_packet(USART1, chunk);
-   	}
-  }
+  while(1);
 }

@@ -17,6 +17,8 @@
  */
 
 #include "uart.h"
+extern void handle_packet(USART_TypeDef *bus, char chunk[]);
+extern int crc_read(USART_TypeDef *bus, uint8_t* buf);
 
 /** IMPORTANT: Dealing with Revision Changes
  * Things to change across revisions:
@@ -96,6 +98,10 @@ USART_ReceiverBuffer* uart_revisionBusDistinguisher(const USART_TypeDef *bus) {
 #define enqueueBuffer(buff,usart) buff.buffer[buff.rear] = usart->RDR; \
 							      buff.rear = (buff.rear + 1) % ReceiveBufferLen
 
+
+bool checkLast(USART_ReceiverBuffer buff, USART_TypeDef *bus){
+	return buff.buffer[(buff.rear-1)%ReceiveBufferLen] == ';'; //check delimiter
+}
 /************************ GPIO INITIALIZATION HELPERS ************************/
 
 void usart1_gpio_init() {
@@ -389,6 +395,7 @@ void usart_transmitBytes(USART_TypeDef *bus, uint8_t message[], int nbytes) {
 
 	// Wait for the Transfer to be completed by monitoring the TC flag
 	while(!(bus->ISR & USART_ISR_TC));
+	printMsg("MGT: ACK\r\n");
 }
 
 /**************************** USART RECEIVER ****************************/
@@ -441,23 +448,35 @@ void usart_flushrx(USART_TypeDef* bus) {
 /**************************** USART INTERRUPTS ****************************/
 
 void USART1_IRQHandler() {
+	NVIC_DisableIRQ(USART1_IRQn);
 	if (USART1->ISR & USART_ISR_RXNE) {
 		USART1->ISR &= ~USART_ISR_RXNE;
-#if OP_REV == 1 || OP_REV == 2 || OP_REV == 3
 		enqueueBuffer(USART1_RxBuffer, USART1);
-#endif
+		// printMsg("INTERRUPT CALLED");
+		if(checkLast(USART1_RxBuffer, USART1)){
+			// printMsg("THIS IS LAST!!!");
+			uint8_t chunk[8];
+			int read_status = crc_read(USART1, chunk);
+			// printMsg("read_status: %d", read_status);
+			if (read_status > 0) 
+				handle_packet(USART1, chunk);
+		}
+}
+	if (USART1->ISR & USART_ISR_RTOF){
+		USART1->ICR |= USART_ISR_RTOF;
 	}
-	if (USART1->ISR & USART_ISR_RTOF) {
-		USART1->ISR &= ~USART_ISR_RTOF;
+	if (USART1->ISR & USART_ISR_ORE) {
+        USART1->ICR |= USART_ICR_ORECF;    // clear overrun
+    }
 #if OP_REV == 1 || OP_REV == 2
 		USART1_RxBuffer.timedout = true;
 #endif
-	}
+	// printMsg("INTERRUPT END 0x%08X\r\n\r\n", USART1->ISR);
+	NVIC_EnableIRQ(USART1_IRQn);
 }
 
 void USART2_IRQHandler() {
 	if (USART2->ISR & USART_ISR_RXNE) {
-		USART2->ISR &= ~USART_ISR_RXNE;
 #if OP_REV == 1 || OP_REV == 2 || OP_REV == 3
 		enqueueBuffer(USART2_RxBuffer, USART2);
 #endif
