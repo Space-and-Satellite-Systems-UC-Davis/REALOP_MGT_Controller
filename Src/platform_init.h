@@ -34,6 +34,9 @@ void init_platform() {
 	led_init();
 	printer_init();
 	systick_init();
+	EXTI->IMR1 |= 1;
+	NVIC_SetPriority(EXTI0_IRQn, 15);
+	NVIC_EnableIRQ(EXTI0_IRQn);
 }
 
 #endif // REALOP1_PLATFORM_INIT_H

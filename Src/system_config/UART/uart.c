@@ -460,6 +460,7 @@ void USART1_IRQHandler() {
 			// printMsg("read_status: %d", read_status);
 			if (read_status > 0) 
 				handle_packet(USART1, chunk);
+			EXTI->SWIER1 |= 1;
 		}
 }
 	if (USART1->ISR & USART_ISR_RTOF){
@@ -472,7 +473,13 @@ void USART1_IRQHandler() {
 		USART1_RxBuffer.timedout = true;
 #endif
 	// printMsg("INTERRUPT END 0x%08X\r\n\r\n", USART1->ISR);
+	printMsg("e");
 	NVIC_EnableIRQ(USART1_IRQn);
+}
+
+void EXTI0_IRQHandler(){
+	EXTI->PR1 |= 1;
+	printMsg("INTERRUPT TRIGGERED!!!!!!!");
 }
 
 void USART2_IRQHandler() {

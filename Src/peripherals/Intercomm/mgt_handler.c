@@ -19,6 +19,7 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int percentage;
     int timer_number;
     int direction; 
+    printMsg("HERE");
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';

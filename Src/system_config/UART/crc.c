@@ -89,8 +89,14 @@ int crc_read(USART_TypeDef *bus, uint8_t* buf) {
         buffer[size] = temp[0];
         size++;
     }while(buffer[size-1] != ';' && size <= 10);
+    // printMsg("SIZE: %d  \"", size);
+    // for(int i = 0; i<size; i++){
+    //     printMsg("%c", buffer[i]);
+    // }
+    // printMsg("\"\r\n\r\n");
     if (size <= 0) return -1;
     if (crc_remainder(buffer, size)) return -1;
+    // printMsg("REMAINDEROKAY");
     crc_ack(bus);
     int breaks = 0;
     for (int index = 0; index + breaks < size; index++) {
