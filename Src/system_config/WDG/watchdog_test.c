@@ -1,6 +1,11 @@
 #include "watchdog.h"
 #include "UART/uart.h"
 #include <LED/led.h>
+#include <print_scan.h>
+
+int zero() {
+    return (getSysTime() % 2 + getSysTime()) % 2;
+}
 
 void testFunction_watchdog() {
     // start watchdog
@@ -15,6 +20,8 @@ void testFunction_watchdog() {
         if(count < 15){
             continue;
         }
-        nop(1);
+        // uh-oh!
+        int x = zero();
+        printMsg("voltage: %f\n", x);
     }
 }
