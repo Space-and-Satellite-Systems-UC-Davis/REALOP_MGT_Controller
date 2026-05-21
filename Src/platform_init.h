@@ -36,6 +36,8 @@ void init_platform() {
 	// printer_init();
 	systick_init();
 	watchdog_init(WWDG_TIMEOUT_TIME);
+	usart_init(USART1, 9600);
+  	coils_setup();
 }
 
 #endif // REALOP1_PLATFORM_INIT_H
