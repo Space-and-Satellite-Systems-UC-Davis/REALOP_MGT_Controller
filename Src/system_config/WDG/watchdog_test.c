@@ -8,6 +8,7 @@ int zero() {
 }
 
 void testFunction_watchdog() {
+    printer_init();
     printMsg("start watchdog\r\n");
     int count = 0;
     while(1){
@@ -23,6 +24,6 @@ void testFunction_watchdog() {
         }
         printMsg("uh-oh!\r\n");
         int x = zero();
-        printMsg("voltage: %f\r\n", x);
+        printMsg("voltage: %s\r\n", x);
     }
 }
