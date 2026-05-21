@@ -8,11 +8,12 @@ int zero() {
 }
 
 void testFunction_watchdog() {
-    // start watchdog
+    printMsg("start watchdog\r\n");
     int count = 0;
     while(1){
     	delay_ms(1000);
         count ++;
+        printMsg("count: %d\r\n", count);
         if(count  == 3){
             watchdog_changeIWDGTimeout(5000);
             delay_ms(10);
@@ -20,8 +21,8 @@ void testFunction_watchdog() {
         if(count < 15){
             continue;
         }
-        // uh-oh!
+        printMsg("uh-oh!\r\n");
         int x = zero();
-        printMsg("voltage: %f\n", x);
+        printMsg("voltage: %f\r\n", x);
     }
 }
