@@ -48,6 +48,7 @@ typedef struct _rx_fifo USART_ReceiverBuffer;
 #if OP_REV == 1
 
 USART_ReceiverBuffer USART1_RxBuffer;
+USART_ReceiverBuffer LPUART1_RxBuffer;
 USART_ReceiverBuffer USART3_RxBuffer;
 
 #elif OP_REV == 2 || OP_REV == 3
@@ -264,6 +265,22 @@ void lpuart_gpio_init() {
 	return;
 }
 
+void usart3_gpio_init() {
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
+	while (GPIOB->OTYPER == 0xFFFFFFFF);
+
+
+	// configure the USART Pins to Alternate Function mode
+	GPIOB->MODER &= ~(GPIO_MODER_MODE10_Msk | GPIO_MODER_MODE11_Msk);
+	GPIOB->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+
+
+	// configure each pin to AF7
+	GPIOB->AFR[1] &= ~(GPIO_AFRH_AFSEL10_Msk | GPIO_AFRH_AFSEL11_Msk);
+	GPIOB->AFR[1] |= (7U << GPIO_AFRH_AFSEL10_Pos) | (7U << GPIO_AFRH_AFSEL11_Pos);
+	return;
+}
+
 
 /*************************** USART INITIALIZATIONS ***************************/
 
@@ -335,6 +352,12 @@ bool usart_init(USART_TypeDef *bus, int baud_rate) {
 			lpuart_gpio_init();
 			uart_8bit_1stop(LPUART1, baud_rate, false);
             NVIC_EnableIRQ(LPUART1_IRQn);
+			break;
+		case (int)USART3:
+			RCC->APB1ENR1 |= RCC_APB1ENR1_USART3EN;
+			usart3_gpio_init();
+			uart_8bit_1stop(USART3, baud_rate, true);
+			NVIC_EnableIRQ(USART3_IRQn);
 			break;
 		default:
 			return false;

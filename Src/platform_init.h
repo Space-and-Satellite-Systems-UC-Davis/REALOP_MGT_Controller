@@ -15,9 +15,10 @@
 #include <Timers/timers.h>
 #include <SPI/spi.h>
 #include <LED/led.h>
-#include <UART/uart.h>
 #include <print_scan.h>
 #include <PWM/pwm_timer.h>
+#include <Sleep/sleep.h>
+#include <RTC/rtc.h>
 
 
 /**

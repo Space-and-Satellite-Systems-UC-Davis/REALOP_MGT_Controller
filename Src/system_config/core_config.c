@@ -86,6 +86,13 @@ void init_coreClocks() {
 
 
 // ----------------------------------------------------------------------------
+void backup_domain_controlEnable() {
+	PWR->CR1 |= PWR_CR1_DBP;
+}
+
+void backup_domain_controlDisable() {
+	PWR->CR1 &= ~PWR_CR1_DBP;
+}
 
 void nop(long long nop_loops) {
 	for (long long i = 0; i < nop_loops; i++) {__NOP();}
