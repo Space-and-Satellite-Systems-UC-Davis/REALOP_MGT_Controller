@@ -2,7 +2,7 @@
 #include <print_scan.h>
 #include "platform_init.h"
 
-
+extern void testFunction_watchdog();
 
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -13,6 +13,7 @@ int main(void)
 {
     init_platform();
 
+    testFunction_watchdog();
     while (1) {
         
     }

@@ -12,7 +12,7 @@ void watchdog_init(int ms){
      if(ms > WWDG_MAX){
          ms = WWDG_MAX;
      }
-     watchdog_wwdg_config(ms);
+//     watchdog_wwdg_config(ms);
     watchdog_interrupt_config(ms);
 }
 
@@ -112,7 +112,7 @@ void watchdog_interrupt_config(int ms){
 
 }
 
-void TIM15_IRQHandler(){
+void TIM1_BRK_TIM15_IRQHandler(){
     if(WATCHDOG_TIMER->SR & TIM_SR_UIF) {
 		WATCHDOG_TIMER->SR &= ~TIM_SR_UIF; //check for interrupt flag and update
     }

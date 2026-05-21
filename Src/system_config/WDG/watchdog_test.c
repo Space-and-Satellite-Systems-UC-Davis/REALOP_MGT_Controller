@@ -4,17 +4,17 @@
 
 void testFunction_watchdog() {
     // start watchdog
-    watchdog_init(420);
     int count = 0;
     while(1){
-        delay_ms(1000);
+    	delay_ms(1000);
         count ++;
         if(count  == 3){
             watchdog_changeIWDGTimeout(5000);
+            delay_ms(10);
         }
         if(count < 15){
             continue;
         }
-        // uh oh!
+        nop(1);
     }
 }

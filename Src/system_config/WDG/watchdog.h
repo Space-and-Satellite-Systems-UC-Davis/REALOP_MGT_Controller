@@ -1,4 +1,4 @@
-#include "stm32l4xx.h"
+#include "stm32l431xx.h"
 #include <globals.h>
 
 #define KEY1 0x45670123

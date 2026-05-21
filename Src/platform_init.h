@@ -18,6 +18,7 @@
 #include <UART/uart.h>
 #include <print_scan.h>
 #include <PWM/pwm_timer.h>
+#include <WDG/watchdog.h>
 
 
 /**
@@ -34,6 +35,7 @@ void init_platform() {
 	led_init();
 	// printer_init();
 	systick_init();
+	watchdog_init(WWDG_TIMEOUT_TIME);
 }
 
 #endif // REALOP1_PLATFORM_INIT_H
