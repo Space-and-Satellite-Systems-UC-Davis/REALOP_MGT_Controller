@@ -55,11 +55,10 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             }
             break;
           case 'C':
-            coil_number = chunk[1] - '0';
+            crc_wait(USART1);
             float payload = 42.0;
             // payload[0] = adc_readVoltage(adc_readCurrent(??, ??)) / RESISTANCE_VALUE_OHMS;
             // TODO: use adc peripheral calls to read the current
-            printMsg("Sizeoffloat = %d", sizeof(float));
             crc_transmit(bus, (uint8_t*)&payload, sizeof(payload));
             break;
           case 'D':

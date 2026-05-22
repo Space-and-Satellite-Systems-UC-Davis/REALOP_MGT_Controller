@@ -19,6 +19,8 @@
 #define MAX_INTERNAL_BYTES MAX_PAYLOAD_BYTES + CRC_CHECK_SIZE + sizeof(char)
 #define MAX_MESSAGE_BYTES ( MAX_INTERNAL_BYTES ) / 2
 
+
+int crc_wait(USART_TypeDef *bus);
 /**
  * Transmit a message. Assumes the message is small enough
  * (< 128 bytes, can be as large as 253 bytes if the message doesn't require breaks)
