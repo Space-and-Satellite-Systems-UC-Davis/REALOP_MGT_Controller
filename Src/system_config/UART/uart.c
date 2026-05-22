@@ -395,7 +395,6 @@ void usart_transmitBytes(USART_TypeDef *bus, uint8_t message[], int nbytes) {
 
 	// Wait for the Transfer to be completed by monitoring the TC flag
 	while(!(bus->ISR & USART_ISR_TC));
-	printMsg("MGT: ACK\r\n");
 }
 
 /**************************** USART RECEIVER ****************************/
@@ -451,7 +450,6 @@ void USART1_IRQHandler() {
 	if (USART1->ISR & USART_ISR_RXNE) {
 		USART1->ISR &= ~USART_ISR_RXNE;
 		enqueueBuffer(USART1_RxBuffer, USART1);
-		// printMsg("INTERRUPT CALLED");
 		if(checkLast(USART1_RxBuffer, USART1)){
 			EXTI->SWIER1 |= 1; //trigger software interrupt
 		}
@@ -465,8 +463,6 @@ void USART1_IRQHandler() {
 #if OP_REV == 1 || OP_REV == 2
 		USART1_RxBuffer.timedout = true;
 #endif
-	// printMsg("INTERRUPT END 0x%08X\r\n\r\n", USART1->ISR);
-	printMsg("e");
 }
 
 void USART2_IRQHandler() {
