@@ -7,6 +7,8 @@
 
 #define RESISTANCE_VALUE_OHMS 42; // TODO
 
+void init_mgtHandler();
+
 void handle_packet(USART_TypeDef *bus, char chunk[]);
 
 #endif // _MGT_HANDLER_

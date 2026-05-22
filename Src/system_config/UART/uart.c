@@ -448,19 +448,12 @@ void usart_flushrx(USART_TypeDef* bus) {
 /**************************** USART INTERRUPTS ****************************/
 
 void USART1_IRQHandler() {
-	NVIC_DisableIRQ(USART1_IRQn);
 	if (USART1->ISR & USART_ISR_RXNE) {
 		USART1->ISR &= ~USART_ISR_RXNE;
 		enqueueBuffer(USART1_RxBuffer, USART1);
 		// printMsg("INTERRUPT CALLED");
 		if(checkLast(USART1_RxBuffer, USART1)){
-			// printMsg("THIS IS LAST!!!");
-			uint8_t chunk[8];
-			int read_status = crc_read(USART1, chunk);
-			// printMsg("read_status: %d", read_status);
-			if (read_status > 0) 
-				handle_packet(USART1, chunk);
-			EXTI->SWIER1 |= 1;
+			EXTI->SWIER1 |= 1; //trigger software interrupt
 		}
 }
 	if (USART1->ISR & USART_ISR_RTOF){
@@ -474,12 +467,6 @@ void USART1_IRQHandler() {
 #endif
 	// printMsg("INTERRUPT END 0x%08X\r\n\r\n", USART1->ISR);
 	printMsg("e");
-	NVIC_EnableIRQ(USART1_IRQn);
-}
-
-void EXTI0_IRQHandler(){
-	EXTI->PR1 |= 1;
-	printMsg("INTERRUPT TRIGGERED!!!!!!!");
 }
 
 void USART2_IRQHandler() {

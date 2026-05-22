@@ -13,13 +13,18 @@ TIM_TypeDef *get_timer_from_number(int n) {
     }
 }
 
+void init_mgtHandler(){
+  EXTI->IMR1 |= 1;
+	NVIC_SetPriority(EXTI0_IRQn, 15);
+	NVIC_EnableIRQ(EXTI0_IRQn);
+}
+
 void handle_packet(USART_TypeDef *bus, char chunk[]) {
     int coil_number;
     int pwm;
     int percentage;
     int timer_number;
     int direction; 
-    printMsg("HERE");
     switch (chunk[0]) {
           case 'S':
             coil_number = chunk[1] - '0';
@@ -69,4 +74,14 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             break;
         }    
     return;
+}
+
+
+void EXTI0_IRQHandler(){
+	EXTI->PR1 |= 1;
+	printMsg("INTERRUPT TRIGGERED!!!!!!!");
+	uint8_t chunk[8];
+	int read_status = crc_read(USART1, chunk);
+	if (read_status > 0) 
+		handle_packet(USART1, chunk);
 }
