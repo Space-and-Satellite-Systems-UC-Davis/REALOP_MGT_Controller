@@ -15,10 +15,11 @@
 #include <Timers/timers.h>
 #include <SPI/spi.h>
 #include <LED/led.h>
-#include <UART/uart.h>
 #include <print_scan.h>
 #include <PWM/pwm_timer.h>
 #include <Intercomm/mgt_handler.h>
+#include <Sleep/sleep.h>
+#include <RTC/rtc.h>
 
 
 /**
@@ -36,6 +37,10 @@ void init_platform() {
 	printer_init();
 	systick_init();
 	init_mgtHandler();
+	usart_init(USART1, 9600);
+  coils_setup();
+  adc_init();
+
 }
 
 #endif // REALOP1_PLATFORM_INIT_H

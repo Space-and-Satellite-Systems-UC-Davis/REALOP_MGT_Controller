@@ -100,7 +100,7 @@ bool pwm_initTimer(PWM_Channels channel, uint32_t period)
 		PWMTimerDRV0->CCMR1 |= TIM_CCMR1_OC1PE;
 		PWMTimerDRV0->CCMR1 |= TIM_CCMR1_OC2PE;
 
-		pwm_timerOn(PWMTimerDRV0);
+		// pwm_timerOn(PWMTimerDRV0);
 		break;
 	case DRV1_PWM0:
 	case DRV1_PWM1:
@@ -112,7 +112,7 @@ bool pwm_initTimer(PWM_Channels channel, uint32_t period)
 		PWMTimerDRV1->CCMR2 |= TIM_CCMR2_OC3PE;
 		PWMTimerDRV1->CCMR2 |= TIM_CCMR2_OC4PE;
 
-		pwm_timerOn(PWMTimerDRV1);
+		// pwm_timerOn(PWMTimerDRV1);
 		break;
 	case DRV2_PWM0:
 	case DRV2_PWM1:
@@ -125,7 +125,7 @@ bool pwm_initTimer(PWM_Channels channel, uint32_t period)
 		PWMTimerDRV2->CCMR1 |= TIM_CCMR1_OC2PE;
 		PWMTimerDRV2->BDTR |= TIM_BDTR_MOE;
 
-		pwm_timerOn(PWMTimerDRV2);
+		// pwm_timerOn(PWMTimerDRV2);
 		break;
 	}
 
