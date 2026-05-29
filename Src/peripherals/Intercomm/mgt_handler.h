@@ -4,6 +4,7 @@
 #include "UART/crc.h"
 #include "PWM/pwm_timer.h"
 #include "Coils/Coils.h"
+#include "ADC/adc.h"
 
 #define RESISTANCE_VALUE_OHMS 42; // TODO
 

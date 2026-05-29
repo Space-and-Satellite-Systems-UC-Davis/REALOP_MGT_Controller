@@ -12,6 +12,7 @@
 #define RCC_CCIPR_ADCSEL_PLLSAI1 (2 << RCC_CCIPR_ADCSEL_Pos)
 #define RCC_CCIPR_ADCSEL_PLLSAI2 (1 << RCC_CCIPR_ADCSEL_Pos)
 
+int adc_coilToChannel(int coil);
 uint16_t adc_readChannel(ADC_TypeDef* adc, int channel);
 float adc_readVoltage(uint16_t channelReading);
 void adc_init();

@@ -19,6 +19,9 @@
 #include <PWM/pwm_timer.h>
 #include <Sleep/sleep.h>
 #include <RTC/rtc.h>
+#include <UART/uart.h>
+
+#define PFC_USART USART1
 
 
 /**
@@ -33,10 +36,11 @@ void init_platform() {
 	pwm_init();
 
 	led_init();
-	// printer_init();
+	printer_init();
 	systick_init();
-	usart_init(USART1, 9600);
   	coils_setup();
+	usart_init(PFC_USART, 9600);
+	adc_init();
 }
 
 #endif // REALOP1_PLATFORM_INIT_H

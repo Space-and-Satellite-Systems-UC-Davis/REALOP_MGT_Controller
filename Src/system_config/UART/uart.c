@@ -206,7 +206,20 @@ void usart3_gpio_init() {
 	// configure each pin to AF7
 	GPIOC->AFR[0] &= ~(GPIO_AFRL_AFSEL4_Msk | GPIO_AFRL_AFSEL5_Msk);
 	GPIOC->AFR[0] |= (7U << GPIO_AFRL_AFSEL4_Pos) | (7U << GPIO_AFRL_AFSEL5_Pos);
+#else if OP_REV == 3
+	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
+	while (GPIOB->OTYPER == 0xFFFFFFFF);
 
+
+	// configure the USART Pins to Alternate Function mode
+	GPIOB->MODER &= ~(GPIO_MODER_MODE10_Msk | GPIO_MODER_MODE11_Msk);
+	GPIOB->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
+
+
+	// configure each pin to AF7
+	GPIOB->AFR[1] &= ~(GPIO_AFRH_AFSEL10_Msk | GPIO_AFRH_AFSEL11_Msk);
+	GPIOB->AFR[1] |= (7U << GPIO_AFRH_AFSEL10_Pos) | (7U << GPIO_AFRH_AFSEL11_Pos);
+	return;
 #endif
 
 	return;
@@ -262,22 +275,6 @@ void lpuart_gpio_init() {
 
 #endif
 
-	return;
-}
-
-void usart3_gpio_init() {
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
-	while (GPIOB->OTYPER == 0xFFFFFFFF);
-
-
-	// configure the USART Pins to Alternate Function mode
-	GPIOB->MODER &= ~(GPIO_MODER_MODE10_Msk | GPIO_MODER_MODE11_Msk);
-	GPIOB->MODER |= (GPIO_MODER_MODE10_1 | GPIO_MODER_MODE11_1);
-
-
-	// configure each pin to AF7
-	GPIOB->AFR[1] &= ~(GPIO_AFRH_AFSEL10_Msk | GPIO_AFRH_AFSEL11_Msk);
-	GPIOB->AFR[1] |= (7U << GPIO_AFRH_AFSEL10_Pos) | (7U << GPIO_AFRH_AFSEL11_Pos);
 	return;
 }
 
@@ -352,12 +349,6 @@ bool usart_init(USART_TypeDef *bus, int baud_rate) {
 			lpuart_gpio_init();
 			uart_8bit_1stop(LPUART1, baud_rate, false);
             NVIC_EnableIRQ(LPUART1_IRQn);
-			break;
-		case (int)USART3:
-			RCC->APB1ENR1 |= RCC_APB1ENR1_USART3EN;
-			usart3_gpio_init();
-			uart_8bit_1stop(USART3, baud_rate, true);
-			NVIC_EnableIRQ(USART3_IRQn);
 			break;
 		default:
 			return false;
@@ -442,7 +433,7 @@ int usart_receiveBytes(USART_TypeDef *bus, uint8_t buffer[], uint16_t size) {
 
 	uint64_t start_time = getSysTime(); //time in ms
 	uint16_t sz = 0;
-	while ((sz < size) && !(is_time_out(start_time, DEFAULT_TIMEOUT_MS))) {
+	while ((sz < size) && !(is_time_out(start_time, 10))) {
 		if (rxbuff->front != rxbuff->rear) {	// rxbuff not empty
 			buffer[sz++] = rxbuff->buffer[rxbuff->front];
 			rxbuff->front = (rxbuff->front + 1) % ReceiveBufferLen;

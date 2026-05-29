@@ -13,7 +13,6 @@
 
 void testFunction_Sleep() {
     // init stuff
-    usart_init(USART1, 9600);
     uint8_t buf[10];
     usart_recieveBytes(USART1, buf, 1);
     
@@ -29,7 +28,7 @@ void testFunction_Sleep() {
         usart_recieveBytes(USART1, num_in, 1);
         
         uint8_t msg[2] = {num_in[0] + 1, '\0'};
-        usart_transmitBytes(USART1, msg); // send to main MCU
+        usart_transmitBytes(USART1, msg, 2); // send to main MCU
     }
     
 }
