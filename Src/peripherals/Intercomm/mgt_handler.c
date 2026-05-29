@@ -39,26 +39,17 @@ void handle_packet(USART_TypeDef *bus, char chunk[]) {
             break;
           case 'C':
             coil_number = chunk[1] - '0';
+            int channel = adc_coilToChannel(coil_number);
             float payload[1];
-            payload[0] = 42.0;
-            // payload[0] = adc_readVoltage(adc_readCurrent(??, ??)) / RESISTANCE_VALUE_OHMS;
-            // TODO: use adc peripheral calls to read the current
+            payload[0] = 42.1;
+            //TODO: NEED VALUE FOR RESISTANCE_VALUE_OHMS
+            // payload[0] = adc_readVoltage(adc_readChannel(ADC1, channel)) / RESISTANCE_VALUE_OHMS;
             crc_transmit(bus, payload, sizeof(float));
             break;
           case 'D':
-
-            coils_disablePWM(COIL0);
-            coils_disablePWM(COIL1);
-            coils_disablePWM(COIL2);
-
-            coils_off(COIL0);
-            coils_off(COIL1);
-            coils_off(COIL2);
-
             pwm_timerOff(PWMTimerDRV0);
             pwm_timerOff(PWMTimerDRV1);
             pwm_timerOff(PWMTimerDRV2);
-
             break;
           case 'F': case 'T':
             timer_number = chunk[1] - '0';

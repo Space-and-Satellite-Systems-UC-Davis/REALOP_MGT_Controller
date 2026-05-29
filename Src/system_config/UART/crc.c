@@ -11,21 +11,23 @@
 #include "print_scan.h"
 
 int crc_wait(USART_TypeDef *bus) {
-    uint8_t ack[MAX_MESSAGE_BYTES];
-    memset(ack, 0, sizeof ack);
-    int count = usart_receiveBytes(bus, ack, MAX_MESSAGE_BYTES);
+    uint8_t ack[1];
     bool acked = false;
-    for (int i = 0; i < sizeof ack; i++) {
-        if (ack[i] == 'A') acked = true;
+    int count = 0;
+    for(int i = 0; i<10; i++){
+        count = usart_receiveBytes(bus, ack, 1);
+        if (ack[0] == 'A'){
+            acked = true;
+            break;
+        }
     }
     return acked - (count < 1); // receives nothing -> -1, receives noise -> 0, receives ACK -> 1.
 }
 
 void crc_ack(USART_TypeDef *bus) {
-    uint8_t ack[MAX_MESSAGE_BYTES];
-    memset(ack, 0, sizeof ack);
+    uint8_t ack[1];
     ack[0] = 'A';
-    usart_transmitBytes(bus, ack, sizeof ack);
+    usart_transmitBytes(bus, ack, 1);
 }
 
 /**
@@ -78,7 +80,7 @@ bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
     buffer[nbytes + breaks + 1] = ';';
     int ack = 0;
     for (int attempts = 0; attempts < 5; attempts++) {
-        usart_transmitBytes(bus, buffer, MAX_MESSAGE_BYTES);
+        usart_transmitBytes(bus, buffer, nbytes+breaks+2);
         ack = crc_wait(bus);
         if (ack != -1) break;
     }
@@ -87,9 +89,17 @@ bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
 
 int crc_read(USART_TypeDef *bus, uint8_t* buf) {
     uint8_t buffer[MAX_MESSAGE_BYTES];
-    int size = usart_receiveBytes(bus, buffer, MAX_MESSAGE_BYTES);
-    if (size <= 0) {usart_transmitBytes(bus, "empty", 5); return -1;}
-    if (crc_remainder(buffer, size)) {usart_transmitBytes(bus, "bad", 3); return -1;}
+    memset(buffer, 0, sizeof(buffer));
+    uint8_t temp[1];
+    int size = 0;
+    do{
+        int count = usart_receiveBytes(bus, temp, 1);
+        if(count == 0) break;
+        buffer[size] = temp[0];
+        size++;
+    }while(buffer[size-1] != ';' && size <= MAX_MESSAGE_BYTES);
+    if (size <= 0) {return -1;}
+    if (crc_remainder(buffer, size)) {return -1;}
     if (buffer[0] == 'A' && buffer[1] == crc_remainder("A", 1) && buffer[2] == ';') {usart_transmitBytes(bus, "ack", 3); return -1;}
     crc_ack(bus);
     int breaks = 0;

@@ -29,7 +29,7 @@ void testFunction_Sleep() {
         usart_recieveBytes(USART1, num_in, 1);
         
         uint8_t msg[2] = {num_in[0] + 1, '\0'};
-        usart_transmitBytes(USART1, msg); // send to main MCU
+        usart_transmitBytes(USART1, msg, 2); // send to main MCU
     }
     
 }

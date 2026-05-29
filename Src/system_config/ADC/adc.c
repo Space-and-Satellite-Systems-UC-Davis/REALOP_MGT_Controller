@@ -110,6 +110,19 @@ void adc_init() {
 
 }
 
+int adc_coilToChannel(int coil){
+    switch(coil){
+        case 0:
+            return 2;
+        case 1:
+            return 3;
+        case 2:
+            return 4;
+        default:
+            return -1;
+    }
+}
+
 /**
  * @param adc   ADC1 global
  * @param channel   2,3, or 4 according to the pin being read
