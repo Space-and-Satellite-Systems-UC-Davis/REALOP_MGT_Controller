@@ -19,6 +19,8 @@ int crc_wait(USART_TypeDef *bus) {
         if (ack[0] == 'A'){
             acked = true;
             break;
+        }else if(ack[0] == ';'){
+            break; //may have accidentally read through packet
         }
     }
     return acked - (count < 1); // receives nothing -> -1, receives noise -> 0, receives ACK -> 1.
