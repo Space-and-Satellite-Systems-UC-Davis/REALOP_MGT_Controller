@@ -13,7 +13,6 @@
 
 void testFunction_Sleep() {
     // init stuff
-    usart_init(USART1, 9600);
     uint8_t buf[10];
     usart_recieveBytes(USART1, buf, 1);
     
