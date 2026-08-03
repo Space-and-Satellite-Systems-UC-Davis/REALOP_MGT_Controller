@@ -11,10 +11,6 @@
 //Time between upload requests in seconds
 #define WAIT_INTERVAL 5
 
-#if !defined(__SOFT_FP__) && defined(__ARM_FP)
-#warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
-#endif
-
 int main(void)
 {
   init_platform();
@@ -31,11 +27,11 @@ int main(void)
 
 	uint8_t chunk[CHUNK_LENGTH];
   while(1) {
-	  usart_transmitBytes(PFC_USART, "HELLO!!!", 8);
-    // memset(chunk, '?', CHUNK_LENGTH);
-   	// int read_status = crc_read(PFC_USART, chunk);
-   	// if (read_status > 0) {
-   	// 	handle_packet(PFC_USART, chunk);
-   	// }
+//	 usart_transmitBytes(PFC_USART, "HELLO!!!", 8);
+     memset(chunk, '?', CHUNK_LENGTH);
+   	 int read_status = crc_read(PFC_USART, chunk);
+   	 if (read_status > 0) {
+   	 	handle_packet(PFC_USART, chunk);
+   	 }
   }
 }
