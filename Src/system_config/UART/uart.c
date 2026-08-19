@@ -186,41 +186,6 @@ void usart2_gpio_init() {
 
 }
 
-void usart3_gpio_init() {
-
-#if OP_REV == 1
-
-	/*
-	 * OP REV 1 GPIO
-	 * 		TX		GPIO C 4		Alternate Function 7
-	 * 		RX		GPIO C 5		Alternate Function 7
-	 */
-
-	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;
-	wait_with_timeout(is_GPIOC_not_ready, DEFAULT_TIMEOUT_MS);
-
-	// configure the USART Pins to Alternate Function mode
-	GPIOC->MODER &= ~(GPIO_MODER_MODE4_Msk | GPIO_MODER_MODE5_Msk);
-	GPIOC->MODER |= (GPIO_MODER_MODE4_1 | GPIO_MODER_MODE5_1);
-
-	// configure each pin to AF7
-	GPIOC->AFR[0] &= ~(GPIO_AFRL_AFSEL4_Msk | GPIO_AFRL_AFSEL5_Msk);
-	GPIOC->AFR[0] |= (7U << GPIO_AFRL_AFSEL4_Pos) | (7U << GPIO_AFRL_AFSEL5_Pos);
-
-#endif
-
-	return;
-}
-
-void uart4_gpio_init() {
-
-	return;
-}
-void uart5_gpio_init() {
-
-	return;
-}
-
 void lpuart_gpio_init() {
 
 #if OP_REV == 2
@@ -353,11 +318,11 @@ bool usart_init(USART_TypeDef *bus, int baud_rate) {
 			uart_8bit_1stop(LPUART1, baud_rate, false);
             NVIC_EnableIRQ(LPUART1_IRQn);
 			break;
-		case (int)USART3:
-			RCC->APB1ENR1 |= RCC_APB1ENR1_USART3EN;
-			usart3_gpio_init();
-			uart_8bit_1stop(USART3, baud_rate, true);
-			NVIC_EnableIRQ(USART3_IRQn);
+//		case (int)USART3:
+//			RCC->APB1ENR1 |= RCC_APB1ENR1_USART3EN;
+//			usart3_gpio_init();
+//			uart_8bit_1stop(USART3, baud_rate, true);
+//			NVIC_EnableIRQ(USART3_IRQn);
 			break;
 		default:
 			return false;
@@ -465,6 +430,7 @@ void usart_flushrx(USART_TypeDef* bus) {
 
 void USART1_IRQHandler() {
 	if (USART1->ISR & USART_ISR_RXNE) {
+		USART1->ISR &= ~USART_ISR_RXNE;
 		enqueueBuffer(USART1_RxBuffer, USART1);
 	}
 	if (USART1->ISR & USART_ISR_RTOF) {

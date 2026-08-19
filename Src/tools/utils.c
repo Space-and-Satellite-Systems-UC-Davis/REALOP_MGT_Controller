@@ -1,5 +1,5 @@
-#include "globals.h"
-
+#include <globals.h>
+#include <print_scan.h>
 
 //Checks if the time hath come
 //Also used for manually implementing timeout loops
@@ -22,14 +22,17 @@ void while_timeout(void (*do_work)(), bool (*should_continue)(), uint64_t timeou
 }
 
 
-void empty_function()
-{
+
+//Many loops just stall until should_continue is false, so this is used
+void empty_function() {
     return;
 }
 
+//Continue waiting as long as given function returns true. End if times out
 void wait_with_timeout(bool (*continue_waiting)(), uint64_t timeout_ms) {
     while_timeout(empty_function, continue_waiting, timeout_ms);
 }
+
 
 //Multiple files use these functions so declaring here to avoid declaring multiple times
 bool is_GPIOA_not_ready() { return (GPIOA->OTYPER == 0xFFFFFFFF); }
@@ -37,4 +40,3 @@ bool is_GPIOB_not_ready() { return (GPIOB->OTYPER == 0xFFFFFFFF); }
 bool is_GPIOC_not_ready() { return (GPIOC->OTYPER == 0xFFFFFFFF); }
 bool is_GPIOD_not_ready() { return (GPIOD->OTYPER == 0xFFFFFFFF); }
 bool is_GPIOE_not_ready() { return (GPIOE->OTYPER == 0xFFFFFFFF); }
-bool is_GPIOH_not_ready() { return (GPIOH->OTYPER == 0xFFFFFFFF); }

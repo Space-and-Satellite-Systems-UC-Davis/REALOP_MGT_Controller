@@ -11,21 +11,25 @@
 #include "print_scan.h"
 
 int crc_wait(USART_TypeDef *bus) {
-    uint8_t ack[MAX_MESSAGE_BYTES];
-    memset(ack, 0, sizeof ack);
-    int count = usart_receiveBytes(bus, ack, MAX_MESSAGE_BYTES);
+    uint8_t ack[1];
     bool acked = false;
-    for (int i = 0; i < sizeof ack; i++) {
-        if (ack[i] == 'A') acked = true;
+    int count = 0;
+    for(int i = 0; i<10; i++){
+        count = usart_receiveBytes(bus, ack, sizeof(ack));
+        if (ack[0] == 'A'){
+            acked = true;
+            break;
+        }else if(ack[0] == ';'){
+            break; //may have accidentally read through packet
+        }
     }
     return acked - (count < 1); // receives nothing -> -1, receives noise -> 0, receives ACK -> 1.
 }
 
 void crc_ack(USART_TypeDef *bus) {
-    uint8_t ack[MAX_MESSAGE_BYTES];
-    memset(ack, 0, sizeof ack);
+    uint8_t ack[1];
     ack[0] = 'A';
-    usart_transmitBytes(bus, ack, sizeof ack);
+    usart_transmitBytes(bus, ack, sizeof(ack));
 }
 
 /**
@@ -78,7 +82,7 @@ bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
     buffer[nbytes + breaks + 1] = ';';
     int ack = 0;
     for (int attempts = 0; attempts < 5; attempts++) {
-        usart_transmitBytes(bus, buffer, MAX_MESSAGE_BYTES);
+        usart_transmitBytes(bus, buffer, nbytes+breaks+2);
         ack = crc_wait(bus);
         if (ack != -1) break;
     }
@@ -87,10 +91,18 @@ bool crc_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes) {
 
 int crc_read(USART_TypeDef *bus, uint8_t* buf) {
     uint8_t buffer[MAX_MESSAGE_BYTES];
-    int size = usart_receiveBytes(bus, buffer, MAX_MESSAGE_BYTES);
-    if (size <= 0) {usart_transmitBytes(bus, "empty", 5); return -1;}
-    if (crc_remainder(buffer, size)) {usart_transmitBytes(bus, "bad", 3); return -1;}
-    if (buffer[0] == 'A' && buffer[1] == crc_remainder("A", 1) && buffer[2] == ';') {usart_transmitBytes(bus, "ack", 3); return -1;}
+    memset(buffer, 0, sizeof(buffer));
+    uint8_t temp[1];
+    int size = 0;
+    do{
+        int count = usart_receiveBytes(bus, temp, 1);
+        if(count == 0) break;
+        buffer[size] = temp[0];
+        size++;
+    }while(buffer[size-1] != ';' && size <= MAX_MESSAGE_BYTES);
+    if (size <= 0) return -1;
+    if (crc_remainder(buffer, size)) return -1;
+    if (buffer[0] == 'A' && buffer[1] == crc_remainder("A", 1) && buffer[2] == ';') return -1;
     crc_ack(bus);
     int breaks = 0;
     for (int index = 0; index + breaks < size && index < MAX_PAYLOAD_BYTES; index++) {
@@ -110,11 +122,22 @@ int crc_read(USART_TypeDef *bus, uint8_t* buf) {
 bool crc_chunked_transmit(USART_TypeDef *bus, uint8_t *payload, int nbytes, int lchunks) {
     int nchunks = ((nbytes - 1) / lchunks) + 1;
     bool cumulative_success = true;
+    int bytes_copied = 0;
     uint8_t subchunk[MAX_PAYLOAD_BYTES];
+
     for (int i = 0; i < nchunks; i++) {
         subchunk[0] = i;
-        memcpy(1 + &subchunk[0], payload + i*lchunks, lchunks);
-        if (!crc_transmit(bus, subchunk, lchunks + 1)) return -1;
+        if (bytes_copied + lchunks < nbytes) {
+        	// Regular step
+            memcpy(&subchunk[1], payload + i*lchunks, lchunks);
+            bytes_copied += lchunks;
+
+            if (!crc_transmit(bus, subchunk, lchunks + 1)) return -1;
+        } else {
+        	// Copy remainder. Avoid sending random junk
+            memcpy(&subchunk[1], payload + i*lchunks, nbytes-bytes_copied);
+            if (!crc_transmit(bus, subchunk, nbytes-bytes_copied+1)) return -1;
+        }
     }
     return cumulative_success;
 }
@@ -123,10 +146,12 @@ int crc_chunked_read(USART_TypeDef *bus, uint8_t* buf, int lchunks, int nchunks)
     uint8_t subchunk[MAX_PAYLOAD_BYTES];
     int read = 0;
     for (int i = 0; i < nchunks; i++) {
-        crc_read(bus, subchunk);
-        if (subchunk[0] == i) read += lchunks;
-        if (subchunk[0] > nchunks) return -1;
-        memcpy(buf + subchunk[0]*lchunks, &subchunk[1], lchunks);
+        int size = crc_read(bus, subchunk);
+        // Giving a negative value for the third argument of memcpy is an error
+        if (size-1 < 0) continue;
+        memcpy(buf + read, &subchunk[1], size-1);
+        if (subchunk[0] == i) read += size-1;
+        if (subchunk[0] >= nchunks) return -1;
     }
     return read;
 }
