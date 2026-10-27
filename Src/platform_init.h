@@ -20,7 +20,7 @@
 #include <Sleep/sleep.h>
 #include <RTC/rtc.h>
 #include <UART/uart.h>
-#include <Coils/coils.h>
+#include <Coils/Coils.h>
 
 
 /**
