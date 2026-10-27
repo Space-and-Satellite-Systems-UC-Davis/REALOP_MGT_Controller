@@ -14,7 +14,7 @@ typedef enum {false, true} bool;
 #define NULL 0
 
 #define WILL_LOOPS_TIMEOUT true
-#define DEFAULT_TIMEOUT_MS 1000
+#define DEFAULT_TIMEOUT_MS 50
 
 #define TIMER_CALLBACK_ARRAY_SIZE 255
 bool is_time_out(uint64_t start_time, uint64_t timeout_ms);
