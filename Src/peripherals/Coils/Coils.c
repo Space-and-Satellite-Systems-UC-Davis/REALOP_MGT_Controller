@@ -26,7 +26,6 @@ void coils_setup() {
     Coil_2.dir_port = GPIOA;
     Coil_2.en_pwm = DRV2_PWM1;
     
-    pwm_init();
     pwm_initTimer(DRV0_PWM1, 100000);
     pwm_initTimer(DRV1_PWM1, 100000);
     pwm_initTimer(DRV2_PWM1, 100000);

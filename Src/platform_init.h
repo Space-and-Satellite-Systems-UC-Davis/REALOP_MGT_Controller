@@ -39,6 +39,7 @@ void init_platform() {
 	systick_init();
 	usart_init(USART1, 9600);
   	coils_setup();
+    adc_init();
 }
 
 #endif // REALOP1_PLATFORM_INIT_H
